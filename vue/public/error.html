@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Expires" content="Mon, 06 Jan 1990 00:00:01 GMT">
+    <meta http-EQUIV="Cache-Control" CONTENT="no-cache">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta HTTP-EQUIV="Expires" CONTENT="-1">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title>페이지에러</title>
+    <style>
+        table td {
+            vertical-align: top;
+            border: solid 1px #888;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>My Thymeleaf Error Page</h1>
+    <table>
+        <tr>
+            <td>error Code</td>
+            <td th:text="${code}" />
+        </tr>
+        <tr>
+            <td>Message</td>
+            <td th:text="${msg}" />
+        </tr>
+        <tr>
+            <td>time</td>
+            <td th:text="${timestamp}" />
+        </tr>
+    </table>
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.SignageMapper">
+	<select id="getList"
+		parameterType="com.mrc.db.dto.signage.SignageCond"
+		resultType="com.mrc.db.dto.signage.Signage">
+		select   a.sign_code   ,a.sign_name
+				,a.sign_type   ,b.name as sign_type_name
+				,a.frame_type  ,b2.name as frame_type_name
+				,a.is_vertical ,b1.ref_data1 as is_vertical_name
+				,a.is_inside   ,b3.name as is_inside_name
+		        ,a.member_code ,m.member_name
+				,a.remark
+		        ,a.hide        ,b4.name as hide_name
+		        ,IFNULL(sb.banner_cnt,0) as banner_cnt
+				,a.insert_code ,a.insert_date
+				,a.update_code ,a.update_date
+				,c.member_name as insert_name
+				,d.member_name as update_name
+		 from t_signage a
+		left join (select sign_code
+		                 ,count(*) as banner_cnt
+					 from t_signage_banner
+					group by sign_code
+		) sb
+		on a.sign_code = sb.sign_code
+		inner join t_common b
+		   on b.main_code = 'S002'
+		  and b.sub_code = a.sign_type
+		inner join t_common b1
+		   on b1.main_code = 'S004'
+		  and b1.sub_code = a.is_vertical
+		inner join t_common b2
+		   on b2.main_code = 'D002'
+		  and b2.sub_code = a.frame_type
+		inner join t_common b3
+		   on b3.main_code = 'S006'
+		  and b3.sub_code = a.is_inside
+		inner join t_common b4
+		   on b4.main_code = 'S007'
+		  and b4.sub_code = a.hide
+		inner join t_member m
+		   on a.member_code = m.member_code
+		inner join t_member c
+		   on a.insert_code = c.member_code
+		inner join t_member d
+		   on a.update_code = d.member_code
+	     
+	      
+		<where>
+			<if test="signCode != null ">
+				and a.sign_code = #{signCode}
+			</if>
+		   
+			<if test="memberCode != null ">
+				and a.member_code = #{memberCode}
+			</if>
+			<if test="signType != null ">
+				and a.sign_type = #{signType}
+			</if>
+			
+			<if test="signName != null and signName != '' ">
+				and a.sign_name LIKE CONCAT('%', #{signName}, '%')
+			</if>
+			<if test="hide != null  ">
+				and a.hide = #{hide}
+			</if>
+		</where>
+		order by a.sign_code desc
+	</select>
+
+	<insert id="save"  keyProperty="signCode" useGeneratedKeys="true" parameterType="com.mrc.db.dto.signage.Signage" >
+		insert into t_signage
+		( sign_code,   sign_name, sign_type, frame_type,  is_vertical, is_inside
+		 ,member_code, remark,    hide,      insert_code, insert_date	
+		 ,update_code, update_date	
+		)
+		values(
+		  #{signCode},   #{signName},  #{signType}, #{frameType}, #{isVertical}, #{isInside}
+		 ,#{memberCode}, #{remark},    #{hide},     #{insertCode}, current_timestamp()
+		 ,#{insertCode}, current_timestamp()
+		)
+		 ON DUPLICATE KEY UPDATE 
+		    sign_name    = #{signName}
+		  , sign_type    = #{signType}
+		  , frame_type   = #{frameType}
+		  , is_vertical  = #{isVertical}
+		  , is_inside    = #{isInside}
+		  , member_code  = #{memberCode}
+		  , remark       = #{remark}
+		  , remark         = #{remark}
+		  , hide           = #{hide}
+		  , update_code    = #{insertCode}
+		  , update_date    = current_timestamp();
+		  <selectKey resultType="int"  keyProperty="signCode" order="AFTER">
+        	SELECT LAST_INSERT_ID() as sign_code;
+  		</selectKey> 
+	</insert>
+	<delete id="delete" parameterType="com.mrc.db.dto.signage.Signage">
+		delete from t_signage_keyword where sign_code = #{signCode};
+		delete from t_signage_banner where sign_code = #{signCode};
+		delete from t_signage_place where sign_code = #{signCode};
+		delete from t_signage where sign_code = #{signCode};
+	</delete>
+	<update id="update" parameterType="com.mrc.db.dto.signage.Signage">
+		update t_signage
+		set sign_name    = #{signName}
+		  , sign_type    = #{signType}
+		  , frame_type   = #{frameType}
+		  , is_vertical  = #{isVertical}
+		  , is_inside    = #{isInside}
+		  , member_code  = #{memberCode}
+		  , remark       = #{remark}
+	      , hide         = #{hide}
+		  , update_code  = #{insertCode}
+		  , update_date  = current_timestamp();
+		where sign_code = #{signCode}
+	</update>
+	<update id="changeStatus" parameterType="com.mrc.db.dto.signage.SignageStatus">
+		update t_signage
+		set hide         = #{hide}
+		  , update_code  = #{updateCode}
+		  , update_date  = current_timestamp()
+		where sign_code  = #{signCode}
+	</update>
+</mapper>

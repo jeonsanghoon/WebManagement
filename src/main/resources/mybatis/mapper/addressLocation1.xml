@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrc.db.mapper.AddressLocation1Mapper">
+
+<select id="getList"
+		parameterType="com.mrc.db.dto.address.AddressLocation1"
+		resultType="com.mrc.db.dto.address.AddressLocation1">
+		set @distance := 0.00125
+		select a.*
+		from t_address_location1 a
+
+		
+		<where>
+		<if test="squareCode != null">
+				and search_latitude = #{searchLatitude}
+			</if>
+			<if test="searchLatitude != null">
+				and search_latitude = #{searchLatitude}
+			</if>
+			<if test="searchLongitude != null">
+				and search_longitude = #{searchLongitude}
+			</if>
+			
+			<if test="latitude != null">
+				and search_latitude between floor(#{latitude} * 100) /100
+			</if>
+			<if test="longitude != null">
+				and search_longitude between floor(#{longitude} * 100) /100
+			</if>
+			
+			<if test="latitude != null">
+				and #{latitude} between a.latitude and a.latitude + @distance 
+			</if>
+			<if test="longitude != null">
+				and #{longitude} between a.longitude and a.longitude + @distance 
+			</if>
+		</where>
+	</select>
+<insert id="save" keyProperty="idx" parameterType="com.mrc.db.dto.address.AddressLocation1">
+	insert into t_address_location1
+	(
+		idx, code, search_latitude, search_longitude, dong_code
+	  , latitude, longitude, sido_name, sigungu_name, dong2_name, gage_rate)
+	values(
+	   #{idx}, #{code}, #{searchLatitude}, #{searchLongitude}, #{dongCode}
+	 , #{latitude}, #{longitude}, #{sidoName}, #{sigunguName}, #{dong2Name}, #{gageRate}
+	)
+	ON DUPLICATE KEY UPDATE
+		search_cnt = IFNULL(search_cnt,0) + 1
+	<selectKey resultType="int"  keyProperty="idx" order="AFTER">
+        	SELECT LAST_INSERT_ID() as idx;
+  	</selectKey>    
+	</insert>
+</mapper>

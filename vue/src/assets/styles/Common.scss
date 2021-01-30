@@ -1,0 +1,404 @@
+@import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
+
+$color: #757575;
+
+.logo_title .v-btn__content {
+  font-family: "Anton", sans-serif;
+}
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#app {
+  color: $color;
+  font-size: $default-font-size;
+
+  .v-select-list {
+    text-align: left;
+  }
+}
+
+#nav {
+  padding: 30px;
+
+  a {
+    font-weight: bold;
+  }
+}
+
+.v-navigation-drawer__border {
+  width: 0px;
+}
+
+.mainmenu {
+  .v-icon {
+    font-size: 18px;
+  }
+  .v-list-group__header__append-icon {
+    margin-left: 0px;
+    .v-icon {
+      font-size: 0.75rem;
+    }
+  }
+  .v-list {
+    &-item--active {
+      background-color: #d9d9d9;
+    }
+    .v-list-item__title {
+      font-weight: bold;
+      color: #554844;
+    }
+  }
+}
+
+.mainmenu {
+  .v-list {
+    .v-list-item--active {
+      .v-list-item__title {
+        color: #3e2723;
+        font-weight: bold;
+      }
+      &.child-menu {
+        background-color: #eaeaea;
+        color: #3e2723;
+      }
+    }
+    .child-menu {
+      margin-top: 0.05em;
+      background-color: #fafafa;
+    }
+  }
+  &.theme--light {
+    .v-navigation-drawer .v-divider {
+      border-color: #eaeaea;
+    }
+  }
+}
+
+.theme--light {
+  .v-label {
+    color: #6d4c41;
+  }
+  .v-list-item--active:hover::before,
+  .v-list-item--active::before {
+    opacity: 0;
+  }
+}
+.v-input--radio-group legend.v-label {
+  font-size: 0.75rem !important;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-transition: "color 9999s ease-out, background-color 9999s ease-out";
+  -webkit-transition-delay: 9999s;
+}
+
+.ondijiBackground {
+  background-color: #e2d9d2 !important;
+
+  &.fullContent {
+    z-index: 10;
+    .row {
+      height: 100%;
+    }
+  }
+}
+
+.v-application {
+  .hide {
+    display: none;
+  }
+  .titleOndaji {
+    font-size: 1.125rem !important;
+    font-weight: 500;
+    letter-spacing: 0.0125rem !important;
+    padding-top: 0px;
+    color: #3e2723;
+  }
+}
+
+.alert {
+  color: #5c4c47 !important;
+  .alert {
+    &_title {
+      font-size: 1rem !important;
+      font-weight: bold;
+    }
+    &_text {
+      color: #3e2723 !important;
+      font-size: $default-font-size;
+    }
+    &_button {
+      font-size: $default-font-size;
+    }
+    &_delbutton {
+      font-size: $default-font-size;
+      color: #e53935 !important;
+    }
+    &_calcelbtn {
+      font-size: $default-font-size;
+      color: #938783;
+    }
+  }
+}
+.v-textarea {
+  textarea {
+    line-height: 150% !important;
+    &::-webkit-scrollbar {
+      width: 10px;
+      margin: 20px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #bfbfbf;
+      border-radius: 10px;
+      background-clip: padding-box;
+      border: 3px solid transparent;
+      margin: 20px;
+    }
+    &::-webkit-scrollbar-track {
+      background-color: grey;
+      border-radius: 10px;
+      box-shadow: inset 0px 0px 5px white;
+      padding-right: 20px;
+    }
+  }
+}
+
+.v-application--is-ltr .v-textarea.v-text-field--enclosed .v-text-field__slot {
+  padding-right: 3px;
+  padding-bottom: 8px;
+}
+
+.v-dialog .theme--light.v-card.ondajiColor {
+  background-color: #f5eee8;
+}
+
+.v-dialog > .v-card > .v-card__title {
+  font-weight: bold !important;
+}
+
+.ql-snow .ql-picker.ql-header {
+  width: 120px !important;
+}
+
+@media screen and (max-width: 768px) {
+  .tui-image-editor-header-buttons {
+    float: left !important;
+  }
+  .tui-image-editor-header-logo {
+    display: none;
+  }
+}
+
+.tui-image-editor-header-buttons > div:not(.tui-image-editor-load-btn) {
+  div & {
+    background-color: #3f51b5 !important;
+    color: white !important;
+  }
+}
+
+.kakaomapInfo {
+  z-index: 30;
+  margin: 2px;
+
+  position: absolute;
+  left: 0;
+  bottom: 44px;
+  width: 308px;
+  height: 84px;
+  margin-left: -154px;
+  text-align: left;
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1.5;
+
+  .mapinfo {
+    width: 100%;
+    height: 100%;
+    padding-top: 0.75rem;
+    border-radius: $border-radius-root;
+    border-bottom: 2px solid #ccc;
+    border-right: 1px solid #ccc;
+    overflow: hidden;
+    background-color: #757575 !important;
+    color: #fff !important;
+    padding: 0.75rem;
+  }
+
+  .mapinfo:nth-child(1) {
+    border: 0;
+    box-shadow: 0px 1px 2px #888;
+  }
+
+  .mapinfo .maptitle {
+    font-weight: bold;
+    i {
+      margin: 5px;
+      font-style: normal;
+      font-weight: 400;
+    }
+  }
+
+  .mapinfo .desc {
+    text-align: left;
+  }
+
+  .desc .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-size: 0.75rem;
+  }
+
+  .desc .jibun {
+    margin-top: 0.5rem;
+  }
+
+  .mapinfo .img {
+    position: absolute;
+    top: 6px;
+    left: 5px;
+    width: 73px;
+    height: 71px;
+    border: 1px solid #ddd;
+    color: #888;
+    overflow: hidden;
+  }
+
+  .mapinfo:after {
+    content: "";
+    position: absolute;
+    margin-left: 4px;
+    left: 43%;
+    bottom: 0;
+    width: 22px;
+    height: 12px;
+    /* background: url("http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");*/
+  }
+
+  .mapinfo .link {
+    color: #5085bb;
+  }
+  .overlayclose {
+    float: right;
+    margin-top: 5px;
+    margin-right: 5px;
+  }
+  .fa.fa-times {
+    position: absolute;
+    right: 0.75rem;
+    top: 0.75rem;
+    color: white;
+    z-index: 5;
+    :hover {
+      cursor: pointer !important;
+    }
+  }
+}
+
+.vue-grid-item {
+  .bannerItem {
+    height: 100% !important;
+    background-size: 100%;
+
+    .fa-ad {
+      position: absolute;
+
+      left: 140px;
+      color: darkmagenta;
+      top: 95px;
+    }
+
+    .header-content {
+      background-color: lightgrey;
+      opacity: 70%;
+      position: absolute;
+      bottom: 0px;
+      padding: 0.3em;
+      width: 100%;
+      text-align: left;
+
+      .bannertitle {
+        font-size: 0.8125em;
+        font-weight: bold;
+
+        &sub {
+          font-size: 0.6875em;
+          font-weight: normal;
+          padding-left: 0.3em;
+        }
+      }
+    }
+  }
+}
+
+.v-btn.button {
+  cursor: pointer;
+  &Confirm {
+    background-color: #3e2723 !important;
+    color: #fff !important;
+    cursor: pointer !important;
+  }
+
+  &Default {
+    background-color: #aea6a4 !important;
+    color: #fff !important;
+    &:hover {
+      background-color: #4e342e !important;
+    }
+    &.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+      color: rgba(0, 0, 0, 0.12) !important;
+    }
+  }
+
+  &Info {
+    background-color: #fff !important;
+    color: #000 !important;
+    font-size: $default-font-size;
+
+    &:hover {
+      background-color: #4e342e !important;
+      color: #fff !important;
+    }
+  }
+}
+
+.v-btn.button {
+  &Clicked {
+    background-color: #4e342e !important;
+    color: #fff !important;
+  }
+}
+
+.v-data-table .v-icon {
+  font-size: 1.125rem;
+}
+
+.nomalContent {
+  padding-top: 38px;
+  padding-left: 0px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+}
+.bannerContainer {
+  padding-top: 0px;
+  margin: 0 auto;
+}
+@media only screen and (min-width: $grid-breakpoints_lg) {
+  .bannerContainer {
+    padding-left: 6rem !important;
+    padding-right: 6rem !important;
+    .bannerItem {
+      padding: 1rem !important;
+    }
+  }
+}
+
+@import "@/assets/styles/display/display.scss";

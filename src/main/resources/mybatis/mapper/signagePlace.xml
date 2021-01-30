@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.SignagePlaceMapper">
+	<select id="getList"
+			parameterType="com.mrc.db.dto.signage.SignageCond"
+			resultType="com.mrc.db.dto.signage.SignagePlace">
+		select a.*
+   	      from t_signage_place a
+		<where>
+			<if test="signCode != null ">
+				and a.sign_code = #{signCode}
+			</if>
+		</where>
+		order by a.sign_code, a.place_code
+	</select>
+
+	<insert id="save"  useGeneratedKeys="true" keyProperty="placeCode"  parameterType="com.mrc.db.dto.signage.SignagePlace" >
+
+		select @area_code :=fn_getAreaCode (#{address});
+		set @region = #{region};
+		<if test="region == null or region = '' ">
+			set @region := fn_getAreaName (#{address});
+		</if>
+
+		insert into t_signage_place
+		(  	place_code, place_type, sign_code,  area_code
+			, region,     address,     address2,     road_address, building
+			, zip_code,   latitude,    longitude,    radius
+			, hide
+			, insert_code, insert_date, update_code, update_date
+		)
+		values(
+			 #{placeCode} ,#{placeType}        ,#{signCode}   ,@area_code
+			,@region       ,#{address}         ,#{address2}   ,#{roadAddress} ,#{building}
+			,#{zipCode}    ,#{latitude}        ,#{longitude}  ,#{radius}      ,#{hide}
+			,#{insertCode} ,current_timestamp(),#{insertCode} ,current_timestamp()
+		)
+		ON DUPLICATE KEY UPDATE
+		place_type   = #{placeType}
+		,area_code    = @area_code
+		,region       = @region
+		,address      = #{address}
+		,address2     = #{address2}
+		,road_address = #{roadAddress}
+		,building     = #{building}
+		,zip_code     = #{zipCode}
+		,latitude     = #{latitude}
+		,longitude    = #{longitude}
+		,radius       = #{radius}
+		,hide         = #{hide}
+		,update_code  = #{insertCode}
+		,update_date  = current_timestamp();
+		<selectKey resultType="int"  keyProperty="placeCode" order="AFTER">
+			SELECT LAST_INSERT_ID() as place_code;
+		</selectKey>
+	</insert>
+	<delete id="delete" parameterType="com.mrc.db.dto.signage.Signage">
+		delete from t_signage_place
+		<where>
+			<if test="signCode != null ">
+				and sign_code = #{signCode}
+			</if>
+			<if test="placeCode != null ">
+				and place_code = #{placeCode}
+			</if>
+		</where>
+	</delete>
+
+</mapper>

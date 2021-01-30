@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.CommonMapper">
+	<select id="getList"
+		parameterType="com.mrc.db.dto.common.commonCond"
+		resultType="com.mrc.db.dto.common.Common">
+		select a.common_code
+		      ,a.main_code
+		      ,a.sub_code
+		      ,a.name
+		      ,a.order_seq
+		      ,a.ref_data1
+		      ,a.ref_data2
+		      ,a.ref_data3
+		      ,a.hide
+		      ,a.insert_code
+		      ,a.insert_date
+		      ,a.update_code
+		      ,a.update_date
+		      ,b.member_name as insert_name
+		      ,c.member_name as update_name
+		  from t_common a
+		 inner join t_member b
+		    on a.insert_code = b.member_code
+		 inner join t_member c
+		    on a.update_code = c.member_code     
+		<where>
+			<if test="mainCode != null and mainCode != '' ">
+				and a.main_code = #{mainCode}
+			</if>
+			<if test="subCode != null ">
+				and a.sub_code LIKE #{subCode}
+			</if>
+			<if test="name != null and name != '' ">
+				and a.name LIKE CONCAT('%', #{name}, '%')
+			</if>
+			<if test="addCond != null and addCond != '' ">
+				${addCond}
+			</if>
+			<if test="hide != null  ">
+				and a.hide = #{hide}
+			</if>
+		</where>
+	</select>
+	<select id="getSelectItemList"
+		parameterType="com.mrc.db.dto.common.commonCond"
+		resultType="com.mrc.db.dto.common.SelectItem">
+		select *
+		from t_common
+		<where>
+		    <if test="commonCode != null and commonCode != '' ">
+				and common_code = #{commonCode}
+			</if>
+			<if test="mainCode != null and mainCode != '' ">
+				and main_code = #{mainCode}
+			</if>
+			<if test="subCode != null ">
+				and sub_code LIKE #{subCode}
+			</if>
+			<if test="name != null and name != '' ">
+				and name LIKE CONCAT('%', #{name}, '%')
+			</if>
+			<if test="addCond != null and addCond != '' ">
+				${addCond}
+			</if>
+			<if test="hide != null  ">
+				and hide = #{hide}
+			</if>
+		</where>
+	</select>
+
+	<insert id="save" keyProperty="commonCode" parameterType="com.mrc.db.dto.common.Common">
+		
+		INSERT INTO t_common
+		(main_code, sub_code, name, order_seq, ref_data1, ref_data2, ref_data3,
+		 ref_data4, hide,     insert_code, insert_date, update_code, update_date)
+		values( #{mainCode}, #{subCode},  #{name}, #{orderSeq}, #{refData1},
+		        #{refData2}, #{refData3}, #{refData4}, #{hide}
+		      , #{insertCode}, current_timestamp(), #{insertCode}, current_timestamp())
+		ON DUPLICATE KEY UPDATE
+		  main_code = #{mainCode}
+		, sub_code  = #{subCode}
+		, name      = #{name}
+		, order_seq = #{orderSeq}
+		, ref_data1 = #{refData1}
+		, ref_data2 = #{refData2}
+		, ref_data3 = #{refData3}
+		, ref_data4 = #{refData4}
+		, hide      = #{hide}
+		, update_code = #{insertCode}
+		, update_date = current_timestamp();
+		<selectKey resultType="int"  keyProperty="common_code" order="AFTER">
+        	SELECT LAST_INSERT_ID() as common_code;
+  		</selectKey>    
+	</insert>
+
+
+
+	<delete id="delete" parameterType="com.mrc.db.dto.common.Common">
+		delete from t_common
+		<where>
+			<if test="commonCode != null and commonCode != '' ">
+				and common_code = #{commonCode}
+			</if>
+			<if test="mainCode != null and main_code != '' ">
+				and main_code = #{mainCode}
+			</if>
+			<if test="subCode != null ">
+				and sub_code like #{subCode}
+			</if>
+		</where>
+	</delete>
+
+
+
+	<update id="update"
+		parameterType="com.mrc.db.dto.common.Common">
+
+		update T_common
+		set name = #{name}
+		  , order_seq   = #{orderSeq}
+		  , ref_data1   = #{refData1}
+		  , ref_data2   = #{refData2}
+		  , ref_data3   = #{refData3}
+		  , ref_data4   = #{refData4}
+		  , hide        = #{hide}
+		  , update_code = #{updateCode}
+		  , update_date = current_timestamp()
+        where main_code = #{mainCode}
+		  and sub_code  = #{subCode};
+
+	</update>
+
+	<select id="getAddressAreaList"
+		parameterType="com.mrc.db.dto.address.AddressArea"
+		resultType="com.mrc.db.dto.address.AddressArea">
+		SELECT level, code, name 
+		  FROM t_address_area
+		 
+		 <where>
+			<if test="level != null ">
+				and level = #{level}
+			</if>
+			<if test="code != null and code != '' ">
+				and code like CONCAT(#{code},'|%')
+			</if>
+			<if test="hide != null ">
+				and hide = #{hide}
+			</if>
+		 </where>
+		 
+		 ORDER BY CASE WHEN LEVEL = 1 THEN CODE 
+                       WHEN LEVEL = 2 THEN CONCAT(SUBSTRING(CODE, 1,3) , NAME)
+                       ELSE CONCAT(SUBSTRING(CODE, 1,5) , NAME) END;
+		
+	</select>
+	
+	<select id="getTableToHtml" resultType="String">
+		call sp_tabletohtmldesc
+	</select>
+
+	<select id="getTotRows" resultType="INTEGER">
+		select FOUND_ROWS();
+	</select>
+
+</mapper>

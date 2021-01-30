@@ -1,0 +1,586 @@
+
+{
+  "header": {
+    "reportVersion": 1,
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20200903.002126.16312.0.001.json",
+    "dumpEventTime": "2020-09-03T00:21:26Z",
+    "dumpEventTimeStamp": "1599060086723",
+    "processId": 16312,
+    "cwd": "C:\\Users\\jsh\\git\\ondaji\\WebManagement\\vue",
+    "commandLine": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\jsh\\git\\ondaji\\WebManagement\\vue\\node_modules\\.bin\\\\..\\@vue\\cli-service\\bin\\vue-cli-service.js",
+      "serve"
+    ],
+    "nodejsVersion": "v13.0.1",
+    "wordSize": 64,
+    "arch": "x64",
+    "platform": "win32",
+    "componentVersions": {
+      "node": "13.0.1",
+      "v8": "7.8.279.17-node.14",
+      "uv": "1.33.1",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "79",
+      "nghttp2": "1.39.2",
+      "napi": "5",
+      "llhttp": "1.1.4",
+      "openssl": "1.1.1d",
+      "cldr": "35.1",
+      "icu": "64.2",
+      "tz": "2019a",
+      "unicode": "12.1"
+    },
+    "release": {
+      "name": "node",
+      "headersUrl": "https://nodejs.org/download/release/v13.0.1/node-v13.0.1-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v13.0.1/node-v13.0.1.tar.gz",
+      "libUrl": "https://nodejs.org/download/release/v13.0.1/win-x64/node.lib"
+    },
+    "osName": "Windows_NT",
+    "osRelease": "10.0.19041",
+    "osVersion": "Windows 10 Pro",
+    "osMachine": "x86_64",
+    "cpus": [
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 47445890,
+        "nice": 0,
+        "sys": 29509953,
+        "idle": 177475734,
+        "irq": 5503593
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 44382000,
+        "nice": 0,
+        "sys": 9618671,
+        "idle": 200430609,
+        "irq": 284718
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 60601500,
+        "nice": 0,
+        "sys": 17819093,
+        "idle": 176010687,
+        "irq": 297406
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 45173500,
+        "nice": 0,
+        "sys": 9965359,
+        "idle": 199292421,
+        "irq": 196453
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 50121875,
+        "nice": 0,
+        "sys": 14040875,
+        "idle": 190268531,
+        "irq": 320546
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 41927640,
+        "nice": 0,
+        "sys": 8003437,
+        "idle": 204500203,
+        "irq": 231984
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 53125078,
+        "nice": 0,
+        "sys": 17338500,
+        "idle": 183967703,
+        "irq": 307531
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 44969093,
+        "nice": 0,
+        "sys": 10863906,
+        "idle": 198598281,
+        "irq": 225687
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 58949671,
+        "nice": 0,
+        "sys": 18254218,
+        "idle": 177227390,
+        "irq": 328453
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 43302406,
+        "nice": 0,
+        "sys": 9595281,
+        "idle": 201533578,
+        "irq": 231265
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 50585812,
+        "nice": 0,
+        "sys": 15403156,
+        "idle": 188442296,
+        "irq": 277140
+      },
+      {
+        "model": "AMD Ryzen 5 2600 Six-Core Processor            ",
+        "speed": 3394,
+        "user": 51310156,
+        "nice": 0,
+        "sys": 10637328,
+        "idle": 192483781,
+        "irq": 225093
+      }
+    ],
+    "networkInterfaces": [
+      {
+        "name": "vEthernet (Default Switch)",
+        "internal": false,
+        "mac": "00:15:5d:6f:06:a6",
+        "address": "fe80::9043:db1c:319e:7ecd",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 27
+      },
+      {
+        "name": "vEthernet (Default Switch)",
+        "internal": false,
+        "mac": "00:15:5d:6f:06:a6",
+        "address": "172.17.32.1",
+        "netmask": "255.255.240.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "이더넷",
+        "internal": false,
+        "mac": "40:b0:76:0f:86:35",
+        "address": "fe80::f1b2:6099:1ee6:a2ef",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 9
+      },
+      {
+        "name": "이더넷",
+        "internal": false,
+        "mac": "40:b0:76:0f:86:35",
+        "address": "192.168.0.5",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      }
+    ],
+    "host": "jsh2"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x00007ff7917c1119",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+10857"
+    },
+    {
+      "pc": "0x00007ff7917c548c",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+28124"
+    },
+    {
+      "pc": "0x00007ff7917c4448",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+23960"
+    },
+    {
+      "pc": "0x00007ff7918afb9b",
+      "symbol": "v8::base::CPU::has_sse+38539"
+    },
+    {
+      "pc": "0x00007ff7920c5b5e",
+      "symbol": "v8::Isolate::ReportExternalAllocationLimitReached+94"
+    },
+    {
+      "pc": "0x00007ff7920ae181",
+      "symbol": "v8::SharedArrayBuffer::Externalize+833"
+    },
+    {
+      "pc": "0x00007ff791f79bfc",
+      "symbol": "v8::internal::Heap::EphemeronKeyWriteBarrierFromCode+1436"
+    },
+    {
+      "pc": "0x00007ff791f84e50",
+      "symbol": "v8::internal::Heap::ProtectUnprotectedMemoryChunks+1312"
+    },
+    {
+      "pc": "0x00007ff791f81974",
+      "symbol": "v8::internal::Heap::PageFlagsAreConsistent+3204"
+    },
+    {
+      "pc": "0x00007ff791f77183",
+      "symbol": "v8::internal::Heap::CollectGarbage+1283"
+    },
+    {
+      "pc": "0x00007ff791f757f4",
+      "symbol": "v8::internal::Heap::AddRetainedMap+2452"
+    },
+    {
+      "pc": "0x00007ff791f96a8d",
+      "symbol": "v8::internal::Factory::NewFillerObject+61"
+    },
+    {
+      "pc": "0x00007ff791cfb6a1",
+      "symbol": "v8::internal::interpreter::JumpTableTargetOffsets::iterator::operator=+1681"
+    },
+    {
+      "pc": "0x00007ff792508d2d",
+      "symbol": "v8::internal::SetupIsolateDelegate::SetupHeap+544781"
+    },
+    {
+      "pc": "0x0000006a2ae8b02a",
+      "symbol": ""
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 2152652800,
+    "totalCommittedMemory": 2152652800,
+    "usedMemory": 2076001760,
+    "availableMemory": 46979864,
+    "memoryLimit": 2197815296,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 262144,
+        "committedMemory": 262144,
+        "capacity": 32808,
+        "used": 32808,
+        "available": 0
+      },
+      "new_space": {
+        "memorySize": 2097152,
+        "committedMemory": 2097152,
+        "capacity": 1047456,
+        "used": 344328,
+        "available": 703128
+      },
+      "old_space": {
+        "memorySize": 1730785280,
+        "committedMemory": 1730785280,
+        "capacity": 1659289664,
+        "used": 1659222880,
+        "available": 66784
+      },
+      "code_space": {
+        "memorySize": 3575808,
+        "committedMemory": 3575808,
+        "capacity": 2937184,
+        "used": 2937184,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 15470592,
+        "committedMemory": 15470592,
+        "capacity": 15026080,
+        "used": 15026080,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 399257600,
+        "committedMemory": 399257600,
+        "capacity": 397344048,
+        "used": 397344048,
+        "available": 0
+      },
+      "code_large_object_space": {
+        "memorySize": 1204224,
+        "committedMemory": 1204224,
+        "capacity": 1094432,
+        "used": 1094432,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 1047456,
+        "used": 0,
+        "available": 1047456
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 557.078,
+    "kernelCpuSeconds": 18.234,
+    "cpuConsumptionPercent": 186.185,
+    "maxRss": 2409254912,
+    "pageFaults": {
+      "IORequired": 2870161,
+      "IONotRequired": 0
+    },
+    "fsActivity": {
+      "reads": 14952,
+      "writes": 9
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "=C:": "C:\\Users\\jsh\\git\\ondaji\\WebManagement\\vue",
+    "ALLUSERSPROFILE": "C:\\ProgramData",
+    "APPDATA": "C:\\Users\\jsh\\AppData\\Roaming",
+    "BABEL_ENV": "development",
+    "ChocolateyInstall": "C:\\ProgramData\\chocolatey",
+    "ChocolateyLastPathUpdate": "132235772262657778",
+    "COLORTERM": "truecolor",
+    "CommonProgramFiles": "C:\\Program Files\\Common Files",
+    "CommonProgramFiles(x86)": "C:\\Program Files (x86)\\Common Files",
+    "CommonProgramW6432": "C:\\Program Files\\Common Files",
+    "COMPUTERNAME": "JSH2",
+    "ComSpec": "C:\\WINDOWS\\system32\\cmd.exe",
+    "dp0": "C:\\Users\\jsh\\git\\ondaji\\WebManagement\\vue\\node_modules\\.bin\\",
+    "DriverData": "C:\\Windows\\System32\\Drivers\\DriverData",
+    "FPS_BROWSER_APP_PROFILE_STRING": "Internet Explorer",
+    "FPS_BROWSER_USER_PROFILE_STRING": "Default",
+    "GIT_ASKPASS": "c:\\Users\\jsh\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\git\\dist\\askpass.sh",
+    "HOMEDRIVE": "C:",
+    "HOMEPATH": "\\Users\\jsh",
+    "INIT_CWD": "C:\\Users\\jsh\\git\\ondaji\\WebManagement\\vue",
+    "JAVA_HOME": "C:\\Program Files\\Java\\jdk1.8.0_231",
+    "LANG": "ko_KR.UTF-8",
+    "LOCALAPPDATA": "C:\\Users\\jsh\\AppData\\Local",
+    "LOGONSERVER": "\\\\JSH2",
+    "NODE": "C:\\Program Files\\nodejs\\node.exe",
+    "NODE_ENV": "development",
+    "npm_config_argv": "{\"remain\":[],\"cooked\":[\"run\",\"serve\"],\"original\":[\"run\",\"serve\"]}",
+    "npm_config_bin_links": "true",
+    "npm_config_ignore_optional": "",
+    "npm_config_ignore_scripts": "",
+    "npm_config_init_license": "MIT",
+    "npm_config_init_version": "1.0.0",
+    "npm_config_registry": "https://registry.yarnpkg.com",
+    "npm_config_save_prefix": "^",
+    "npm_config_strict_ssl": "",
+    "npm_config_user_agent": "yarn/1.21.1 npm/? node/v13.0.1 win32 x64",
+    "npm_config_version_commit_hooks": "true",
+    "npm_config_version_git_message": "v%s",
+    "npm_config_version_git_sign": "",
+    "npm_config_version_git_tag": "true",
+    "npm_config_version_tag_prefix": "v",
+    "npm_execpath": "C:\\Users\\jsh\\AppData\\Roaming\\npm\\node_modules\\yarn\\bin\\yarn.js",
+    "npm_lifecycle_event": "serve",
+    "npm_lifecycle_script": "vue-cli-service serve",
+    "npm_node_execpath": "C:\\Program Files\\nodejs\\node.exe",
+    "npm_package_browserslist_0": "> 1%",
+    "npm_package_browserslist_1": "last 2 versions",
+    "npm_package_dependencies_axios": "^0.19.2",
+    "npm_package_dependencies_b": "^2.0.1",
+    "npm_package_dependencies_core_js": "^3.6.4",
+    "npm_package_dependencies_date_fns": "^2.15.0",
+    "npm_package_dependencies_dragdealer": "^0.10.0",
+    "npm_package_dependencies_es6_promise": "^4.2.8",
+    "npm_package_dependencies_fabric": "^3.6.3",
+    "npm_package_dependencies_filepond": "^4.12.0",
+    "npm_package_dependencies_filepond_plugin_file_validate_type": "^1.2.4",
+    "npm_package_dependencies_filepond_plugin_image_crop": "^2.0.3",
+    "npm_package_dependencies_filepond_plugin_image_edit": "^1.6.0",
+    "npm_package_dependencies_filepond_plugin_image_preview": "^4.6.1",
+    "npm_package_dependencies_filepond_plugin_image_transform": "^3.7.2",
+    "npm_package_dependencies_fluent_ffmpeg": "^2.1.2",
+    "npm_package_dependencies_minify_css_string": "^1.0.0",
+    "npm_package_dependencies_moment": "^2.24.0",
+    "npm_package_dependencies_node_sass": "^4.14.1",
+    "npm_package_dependencies_quill_image_drop_module": "^1.0.3",
+    "npm_package_dependencies_quill_image_resize_module": "^3.0.0",
+    "npm_package_dependencies_sl_vue_tree": "^1.8.4",
+    "npm_package_dependencies_sortablejs": "^1.10.2",
+    "npm_package_dependencies_thumbler": "^1.1.2",
+    "npm_package_dependencies_tui_code_snippet": "^2.3.1",
+    "npm_package_dependencies_tui_image_editor": "^3.9.0",
+    "npm_package_dependencies_video_thumb": "0.0.3",
+    "npm_package_dependencies_video_thumbnail": "^1.2.0",
+    "npm_package_dependencies_video_thumbnail_generator": "^1.1.3",
+    "npm_package_dependencies_vue": "^2.6.10",
+    "npm_package_dependencies_vue2_dropzone": "^3.6.0",
+    "npm_package_dependencies_vue2_editor": "^2.10.2",
+    "npm_package_dependencies_vuedraggable": "^2.23.2",
+    "npm_package_dependencies_vuetify": "^2.2.34",
+    "npm_package_dependencies_vuetify_daterange_picker": "^3.2.0",
+    "npm_package_dependencies_vuetify_numeric": "^0.1.3",
+    "npm_package_dependencies_vuex": "^3.1.3",
+    "npm_package_dependencies_vue_analytics": "^5.22.1",
+    "npm_package_dependencies_vue_carousel": "^0.18.0",
+    "npm_package_dependencies_vue_datepicker_local": "^1.0.19",
+    "npm_package_dependencies_vue_daum_map": "^1.0.15",
+    "npm_package_dependencies_vue_daum_postcode": "^0.8.0",
+    "npm_package_dependencies_vue_drag_it_dude": "^1.3.0",
+    "npm_package_dependencies_vue_drag_move": "^1.0.1",
+    "npm_package_dependencies_vue_filepond": "^6.0.2",
+    "npm_package_dependencies_vue_grid_layout": "^2.3.7",
+    "npm_package_dependencies_vue_moment": "^4.1.0",
+    "npm_package_dependencies_vue_momentjs": "^0.1.2",
+    "npm_package_dependencies_vue_quill_editor": "^3.0.6",
+    "npm_package_dependencies_vue_quill_editor_upload": "^1.1.0",
+    "npm_package_dependencies_vue_responsive_dash": "^0.3.19",
+    "npm_package_dependencies_vue_router": "^3.1.6",
+    "npm_package_dependencies_vue_sortable": "^0.1.3",
+    "npm_package_dependencies_vue_super_slider": "^0.3.1",
+    "npm_package_dependencies_v_calendar": "^1.0.8",
+    "npm_package_dependencies_v_mask": "^2.1.0",
+    "npm_package_dependencies_watch": "^1.0.2",
+    "npm_package_dependencies__chenfengyuan_vue_carousel": "^1.0.5",
+    "npm_package_dependencies__fortawesome_free_regular_svg_icons": "^5.12.1",
+    "npm_package_dependencies__livelybone_vue_datepicker": "^4.0.2",
+    "npm_package_dependencies__northwalker_vue_hotel_datepicker": "^2.0.7",
+    "npm_package_dependencies__toast_ui_vue_image_editor": "^1.2.0",
+    "npm_package_description": "## Project setup ``` npm install ```",
+    "npm_package_devDependencies_babel_eslint": "^10.1.0",
+    "npm_package_devDependencies_eslint": "^5.16.0",
+    "npm_package_devDependencies_eslint_plugin_vue": "^5.0.0",
+    "npm_package_devDependencies_prettier": "^1.19.1",
+    "npm_package_devDependencies_quill_image_extend_module": "^1.1.2",
+    "npm_package_devDependencies_sass": "^1.26.2",
+    "npm_package_devDependencies_sass_loader": "^8.0.2",
+    "npm_package_devDependencies_video_js": "^7.7.5",
+    "npm_package_devDependencies_vuetify_loader": "^1.3.0",
+    "npm_package_devDependencies_vue_cli_plugin_vuetify": "^2.0.5",
+    "npm_package_devDependencies_vue_template_compiler": "^2.6.10",
+    "npm_package_devDependencies__fortawesome_fontawesome_free": "^5.13.0",
+    "npm_package_devDependencies__fortawesome_fontawesome_svg_core": "^1.2.27",
+    "npm_package_devDependencies__fortawesome_free_solid_svg_icons": "^5.12.1",
+    "npm_package_devDependencies__fortawesome_vue_fontawesome": "^0.1.9",
+    "npm_package_devDependencies__mdi_font": "^5.0.45",
+    "npm_package_devDependencies__vue_cli_plugin_babel": "^4.2.3",
+    "npm_package_devDependencies__vue_cli_plugin_eslint": "^4.2.3",
+    "npm_package_devDependencies__vue_cli_plugin_router": "^4.2.3",
+    "npm_package_devDependencies__vue_cli_service": "^4.2.3",
+    "npm_package_eslintConfig_env_node": "true",
+    "npm_package_eslintConfig_extends_0": "plugin:vue/essential",
+    "npm_package_eslintConfig_extends_1": "eslint:recommended",
+    "npm_package_eslintConfig_parserOptions_parser": "babel-eslint",
+    "npm_package_eslintConfig_root": "true",
+    "npm_package_eslintConfig_rules_no_console": "off",
+    "npm_package_name": "vue",
+    "npm_package_private": "true",
+    "npm_package_readmeFilename": "README.md",
+    "npm_package_scripts_build": "vue-cli-service build",
+    "npm_package_scripts_lint": "vue-cli-service lint",
+    "npm_package_scripts_serve": "vue-cli-service serve",
+    "npm_package_version": "0.1.0",
+    "NUMBER_OF_PROCESSORS": "12",
+    "OneDrive": "C:\\Users\\jsh\\OneDrive",
+    "ORIGINAL_XDG_CURRENT_DESKTOP": "undefined",
+    "OS": "Windows_NT",
+    "Path": "C:\\Users\\jsh\\AppData\\Local\\Temp\\yarn--1599059777353-0.5952943276529623;C:\\Users\\jsh\\git\\ondaji\\WebManagement\\vue\\node_modules\\.bin;C:\\Users\\jsh\\AppData\\Local\\Yarn\\Data\\link\\node_modules\\.bin;C:\\Users\\jsh\\AppData\\Local\\Yarn\\bin;C:\\Program Files\\libexec\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Python27\\;C:\\Python27\\Scripts;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\windows\\system32;C:\\windows;C:\\windows\\System32\\Wbem;C:\\windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\windows\\System32\\OpenSSH\\;C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\130\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\140\\Tools\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\140\\Tools\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\140\\DTS\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\Client SDK\\ODBC\\130\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\140\\DTS\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\140\\Tools\\Binn\\ManagementStudio\\;C:\\Program Files\\dotnet\\;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\;C:\\Program Files\\MongoDB\\Server\\4.0\\bin;C:\\Program Files\\Git\\cmd;C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\nodejs\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\ojdkbuild\\java-1.8.0-openjdk-1.8.0.232-2\\bin;C:\\Program Files\\ojdkbuild\\java-1.8.0-openjdk-1.8.0.232-2\\jre\\bin;C:\\Program Files\\Java\\jdk1.8.0_231\\bin;C:\\ProgramData\\chocolatey\\bin;C:\\dev\\flutter\\bin;C:\\Program Files\\MySQL\\MySQL Shell 8.0\\bin\\;C:\\Users\\jsh\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\MongoDB\\Server\\4.0\\bin;C:\\Users\\jsh\\AppData\\Roaming\\npm;;C:\\Users\\jsh\\AppData\\Local\\Programs\\Microsoft VS Code\\bin",
+    "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JSE;.WSF;.WSH;.MSC;.CPL",
+    "PROCESSOR_ARCHITECTURE": "AMD64",
+    "PROCESSOR_IDENTIFIER": "AMD64 Family 23 Model 8 Stepping 2, AuthenticAMD",
+    "PROCESSOR_LEVEL": "23",
+    "PROCESSOR_REVISION": "0802",
+    "ProgramData": "C:\\ProgramData",
+    "ProgramFiles": "C:\\Program Files",
+    "ProgramFiles(x86)": "C:\\Program Files (x86)",
+    "ProgramW6432": "C:\\Program Files",
+    "PROMPT": "$P$G",
+    "PSModulePath": "C:\\Users\\jsh\\OneDrive\\문서\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules;C:\\Program Files (x86)\\Microsoft SQL Server\\140\\Tools\\PowerShell\\Modules\\",
+    "PUBLIC": "C:\\Users\\Public",
+    "SESSIONNAME": "Console",
+    "SystemDrive": "C:",
+    "SystemRoot": "C:\\WINDOWS",
+    "TEMP": "C:\\Users\\jsh\\AppData\\Local\\Temp",
+    "TERM_PROGRAM": "vscode",
+    "TERM_PROGRAM_VERSION": "1.48.2",
+    "TMP": "C:\\Users\\jsh\\AppData\\Local\\Temp",
+    "USERDOMAIN": "JSH2",
+    "USERDOMAIN_ROAMINGPROFILE": "JSH2",
+    "USERNAME": "jsh",
+    "USERPROFILE": "C:\\Users\\jsh",
+    "VSCODE_GIT_ASKPASS_MAIN": "c:\\Users\\jsh\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\git\\dist\\askpass-main.js",
+    "VSCODE_GIT_ASKPASS_NODE": "C:\\Users\\jsh\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+    "VSCODE_GIT_IPC_HANDLE": "\\\\.\\pipe\\vscode-git-3b3cd40158-sock",
+    "VUE_CLI_ENTRY_FILES": "[\"C:\\\\Users\\\\jsh\\\\git\\\\ondaji\\\\WebManagement\\\\vue\\\\src\\\\main.js\"]",
+    "VUE_CLI_TRANSPILE_BABEL_RUNTIME": "true",
+    "WEBPACK_DEV_SERVER": "true",
+    "windir": "C:\\WINDOWS",
+    "YARN_WRAP_OUTPUT": "false",
+    "_prog": "node"
+  },
+  "sharedObjects": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\WINDOWS\\SYSTEM32\\ntdll.dll",
+    "C:\\WINDOWS\\System32\\KERNEL32.DLL",
+    "C:\\WINDOWS\\System32\\KERNELBASE.dll",
+    "C:\\WINDOWS\\System32\\WS2_32.dll",
+    "C:\\WINDOWS\\System32\\RPCRT4.dll",
+    "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+    "C:\\WINDOWS\\SYSTEM32\\dbghelp.dll",
+    "C:\\WINDOWS\\System32\\msvcrt.dll",
+    "C:\\WINDOWS\\System32\\ucrtbase.dll",
+    "C:\\WINDOWS\\System32\\sechost.dll",
+    "C:\\WINDOWS\\System32\\USER32.dll",
+    "C:\\WINDOWS\\System32\\win32u.dll",
+    "C:\\WINDOWS\\System32\\GDI32.dll",
+    "C:\\WINDOWS\\System32\\gdi32full.dll",
+    "C:\\WINDOWS\\System32\\msvcp_win.dll",
+    "C:\\WINDOWS\\System32\\PSAPI.DLL",
+    "C:\\WINDOWS\\System32\\CRYPT32.dll",
+    "C:\\WINDOWS\\System32\\bcrypt.dll",
+    "C:\\WINDOWS\\SYSTEM32\\IPHLPAPI.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\USERENV.dll",
+    "C:\\WINDOWS\\SYSTEM32\\WINMM.dll",
+    "C:\\WINDOWS\\System32\\IMM32.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\powrprof.dll",
+    "C:\\WINDOWS\\SYSTEM32\\UMPDC.dll",
+    "C:\\WINDOWS\\SYSTEM32\\CRYPTBASE.DLL",
+    "C:\\WINDOWS\\system32\\uxtheme.dll",
+    "C:\\WINDOWS\\System32\\combase.dll",
+    "C:\\WINDOWS\\system32\\mswsock.dll",
+    "C:\\WINDOWS\\SYSTEM32\\kernel.appcore.dll",
+    "C:\\WINDOWS\\System32\\bcryptprimitives.dll",
+    "C:\\WINDOWS\\system32\\napinsp.dll",
+    "C:\\WINDOWS\\system32\\pnrpnsp.dll",
+    "C:\\WINDOWS\\system32\\wshbth.dll",
+    "C:\\WINDOWS\\system32\\NLAapi.dll",
+    "C:\\WINDOWS\\SYSTEM32\\DNSAPI.dll",
+    "C:\\WINDOWS\\System32\\NSI.dll",
+    "C:\\WINDOWS\\System32\\winrnr.dll",
+    "C:\\WINDOWS\\SYSTEM32\\dhcpcsvc6.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\dhcpcsvc.DLL",
+    "C:\\Windows\\System32\\rasadhlp.dll",
+    "C:\\WINDOWS\\System32\\fwpuclnt.dll"
+  ]
+}

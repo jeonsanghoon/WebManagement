@@ -1,0 +1,90 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('/fonts/icomoon.eot?aajnn4');
+  src:  url('/fonts/icomoon.eot?aajnn4#iefix') format('embedded-opentype'),
+    url('/fonts/icomoon.ttf?aajnn4') format('truetype'),
+    url('/fonts/icomoon.woff?aajnn4') format('woff'),
+    url('/fonts/icomoon.svg?aajnn4#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-alert:before {
+  content: "\e900";
+  color: #5c4c47;
+  font-size:1.5rem;
+
+}
+.icon-bannermake:before {
+  content: "\e901";
+  color: #3E2723;
+  font-size:1.5rem;
+}
+.icon-bannersave:before {
+  content: "\e902";
+  color: #c2b7b3;
+  font-size:1.5rem;
+}
+.icon-dashboard:before {
+  content: "\e903";
+  color: #c2b7b3;
+  font-size:1.5rem;
+}
+.icon-exitnav:before {
+  content: "\e904";
+}
+.icon-install:before {
+  content: "\e905";
+  color: #c2b7b3;
+  font-size:1.5rem;
+}
+.icon-mediaedit:before {
+  content: "\e906";
+  color: #c2b7b3;
+  font-size:1.5rem;
+}
+.icon-menu:before {
+  content: "\e907";
+  color: #5c4c47;
+  font-size:1.5rem;
+}
+.icon-statistics:before {
+  content: "\e908";
+  color: #c2b7b3;
+  font-size:1.5rem;
+}
+
+.icon-dashboard:before, .icon-bannermake:before, .icon-bannersave:before
+,.icon-dashboardbefore, .icon-exitnav:before,    .icon-install:before
+,.icon-mediaedit:before,.icon-statistics:before
+{
+  color: #938783;
+}
+
+
+.v-list-item--active .icon-dashboard:before, .v-list-item--active .icon-bannermake:before, .v-list-item--active .icon-bannersave:before
+,.v-list-item--active .icon-dashboardbefore, .v-list-item--active .icon-exitnav:before, .v-list-item--active .icon-install:before
+,.v-list-item--active .icon-mediaedit:before, .v-list-item--active .icon-statistics:before
+{
+  color: #3E2723;
+}
+
+
+
+

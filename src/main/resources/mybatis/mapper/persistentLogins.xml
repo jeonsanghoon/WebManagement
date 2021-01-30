@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.PersistentLoginsMapper">
+	<select id="getTokenList"
+		parameterType="com.mrc.db.dto.member.PersistentLogins"
+		resultType="com.mrc.db.dto.member.PersistentLogins">
+	SELECT m.series
+	      ,m.user_name
+	      ,m.token
+	      ,m.last_used
+	  from persistent_logins m
+	
+		 
+		<where>
+			<if test="series != null and series != '' ">
+				and m.series = #{series}
+			</if>
+			<if test="userName != null and userName != '' ">
+				and m.user_name = #{userName}
+			</if>
+			<if test="token != null  and token != '' ">
+				and m.token = #{token} 
+			</if>
+		</where>
+	</select>
+	<insert id="createToken" parameterType="com.mrc.db.dto.member.PersistentLogins" >
+		INSERT INTO persistent_logins
+		(series, user_name, token, last_used)
+		
+		values(#{series}, #{userName}, #{token},current_timestamp())
+	
+	</insert>
+	<update id="updateToken" parameterType="com.mrc.db.dto.member.PersistentLogins" >
+		update persistent_logins
+		   set token     = #{token}
+		      ,last_used = current_timestamp()
+		 where series    = #{series}
+	</update>
+	<delete id="deleteToken" parameterType="com.mrc.db.dto.member.PersistentLogins" >
+		delete from persistent_logins
+		 where user_name = #{userName}
+	</delete>
+</mapper>
+	

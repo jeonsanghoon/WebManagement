@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.MemberCompanyMapper">
+    <select id="getList"
+            parameterType="com.mrc.db.dto.member.MemberCond"
+            resultType="com.mrc.db.dto.file.File">
+        select a.*
+        from t_member_company a
+        <where>
+            <if test="member_code != null ">
+                and a.member_code = #{memberCode}
+            </if>
+        </where>
+    </select>
+    <insert id="save" parameterType="com.mrc.db.dto.member.MemberCompany" >
+        /* 비즈니스계정 전환할 경우 */
+        update t_member
+           set auth_type = 20
+              ,update_code = #{updateCode}
+              ,update_date = current_timestamp()
+        where member_code = #{memberCode}
+          and auth_type not in (1,20);
+
+        /*0 비영리 1 영리  https://redperfume.tistory.com/1050*/
+        set @profit_type = case when substring(#{businessType},4,2) IN ('81','85','86','87') then 0 else 1 end;
+        insert into t_member_company
+        ( member_code, company_name, branch_name, business_type
+        , business_number, profit_type, update_code, update_date)
+
+        values( #{memberCode}, #{companyName}, #{branchName}, #{businessType}
+              , #{businessNumber}, @profit_type, #{updateCode} ,current_timestamp())
+
+         on duplicate key update
+             company_name     = #{companyName}
+            , branch_name     = #{branchName}
+            , business_type   = #{businessType}
+            , business_number = #{businessNumber}
+            , profit_type     = @profit_type
+            , update_code     = #{updateCode}
+            , update_date     = current_timestamp();
+
+    </insert>
+    <delete id="delete" parameterType="com.mrc.db.dto.member.MemberCompany">
+        /* 개인계정 전환할 경우 삭제됨 */
+        update t_member
+           set auth_type = 30
+             , update_code = #{updateCode}
+             , update_date = current_timestamp()
+         where member_code = ${member_code}
+           and auth_type   = 20;
+
+        delete from t_member_company
+         where member_code = #{memberCode};
+    </delete>
+
+    <update id="changeIndividual" keyProperty="idx" parameterType="com.mrc.db.dto.member.Member" >
+
+        set @member_code = #{memberCode};
+
+        delete from t_member_company
+         where member_code = @member_code;
+
+        update t_member
+           set nickname = #{nickname}
+         where member_code = @member_code;
+
+        update t_member
+           set nickname = #{nickname}
+              ,auth_type  = 30
+         where member_code = @member_code
+           and auth_type = 20
+
+    </update>
+</mapper>

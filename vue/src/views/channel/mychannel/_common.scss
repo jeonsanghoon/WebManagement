@@ -1,0 +1,42 @@
+.componentPage {
+  padding-top: 0px;
+}
+.v-card {
+  padding-top: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  .bottomButtons {
+    padding: 8px 20px 20px 16px;
+  }
+}
+.cardTitle {
+  text-align: left;
+  padding: 0px 24px 4px 16px;
+}
+.cardContent {
+  text-align: left;
+  padding: 8px 16px 0px 16px;
+}
+
+.mCard .alertMsg {
+  border: 1px solid #2979ff !important;
+  text-align: left;
+  font-weight: 700;
+  color: #2979ff;
+  background-color: #e3f2fd !important;
+  margin-left: 12px !important;
+  margin-right: 12px !important;
+  & .detail {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+  }
+}
+@include mobile {
+  .v-card {
+    padding-top: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 12px;
+  }
+}

@@ -1,0 +1,66 @@
+@use 'sass:map';
+@use 'sass:string';
+// src/sass/variables.scss
+@import "./display/mixin.scss";
+// Globals
+$body-font-family: "Roboto", "Noto Sans KR", "sans-serif";
+$border-radius-root: 3px;
+$font-size-root: 16px;
+$default-font-size: 0.875rem;
+
+$default-color: #3e2723;
+$disable-color: #c4c4c4;
+// Variables must come before the import
+$btn-letter-spacing: 0;
+$btn-font-weight: 400;
+$list-item-title-font-size: 0.875rem;
+$list-item-dense-title-font-size: 0.875rem;
+$list-item-dense-title-font-weight: initial;
+$fab-icon-sizes: (
+  "small": 20,
+);
+$btn-sizes: (
+  "default": 36,
+  "large": 44,
+);
+
+$headings: (
+  "h1": (
+    "size": 6rem,
+  ),
+  "h2": (
+    "size": 3.75rem,
+  ),
+);
+
+/**
+  그리드 레이아웃 설정
+*/
+$grid-breakpoints: (
+  xs: 0,
+  sm: 600px,
+  md: 960px,
+  lg: 1264px,
+  xl: 1904px,
+);
+
+$grid-breakpoints_xs: map-get(
+  $map: $grid-breakpoints,
+  $key: xs,
+);
+$grid-breakpoints_sm: map-get(
+  $map: $grid-breakpoints,
+  $key: sm,
+);
+$grid-breakpoints_md: map-get(
+  $map: $grid-breakpoints,
+  $key: md,
+);
+$grid-breakpoints_lg: map-get(
+  $map: $grid-breakpoints,
+  $key: lg,
+);
+$grid-breakpoints_xl: map-get(
+  $map: $grid-breakpoints,
+  $key: xl,
+);

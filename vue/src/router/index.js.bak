@@ -1,0 +1,357 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Home from '../views/Home.vue'
+import { BaseCommon } from '@/assets/scripts/Common'
+
+import { Config } from '../assets/scripts/Config'
+import { EventBus } from '../assets/scripts/EventBus'
+
+Vue.use(VueRouter)
+
+const routes = [
+    {
+        path: '/',
+        name: 'home',
+        beforeRouteEnter: (to, from, next) => {
+            console.log('beforeRouteEnter')
+            console.log(to)
+            console.log(from)
+            console.log(next)
+            this.$store.dispatch('baseStore/setIsShowBar', true)
+        },
+        component: Home,
+    },
+    {
+        path: '/member/about',
+        name: 'about',
+        beforeRouteEnter: (to, from, next) => {
+            console.log(to)
+            console.log(from)
+            console.log(next)
+            console.log('beforeRouteEnter')
+            this.$store.dispatch('baseStore/setIsShowBar', false)
+        },
+        component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    },
+    {
+        path: '/register/',
+        name: 'register',
+        beforeRouteEnter: (to, from, next) => {
+            console.log(to)
+            console.log(from)
+            console.log(next)
+            console.log('beforeRouteEnter')
+            this.$store.dispatch('baseStore/setIsShowBar', false)
+        },
+        component: () => import(/* webpackChunkName: "about" */ '../views/register/register.vue'),
+    },
+    {
+        path: '/register/member',
+        name: 'registermember',
+        beforeRouteEnter: (to, from, next) => {
+            console.log(to)
+            console.log(from)
+            console.log(next)
+            console.log('beforeRouteEnter')
+            this.$store.dispatch('baseStore/setIsShowBar', false)
+        },
+        component: () => import(/* webpackChunkName: "about" */ '../views/register/member/registerMember.vue'),
+    },
+    {
+        path: '/register/company',
+        name: 'registercompnay',
+        beforeRouteEnter: (to, from, next) => {
+            console.log(to)
+            console.log(from)
+            console.log(next)
+            console.log('beforeRouteEnter')
+            this.$store.dispatch('baseStore/setIsShowBar', false)
+        },
+        component: () => import(/* webpackChunkName: "about" */ '../views/register/company/registerCompany.vue'),
+    },
+    {
+        path: '/member/modify',
+        name: 'membermod',
+        beforeRouteEnter: (to, from, next) => {
+            console.log(to)
+            console.log(from)
+            console.log(next)
+            console.log('beforeRouteEnter')
+            this.$store.dispatch('baseStore/setIsShowBar', false)
+        },
+        component: () => import(/* webpackChunkName: "about" */ '../views/member/modify.vue'),
+    },
+    {
+        path: '/member/list',
+        name: 'memberlist',
+        beforeRouteEnter: (to, from, next) => {
+            console.log(to)
+            console.log(from)
+            console.log(next)
+            console.log('beforeRouteEnter')
+            this.$store.dispatch('baseStore/setIsShowBar', false)
+        },
+        component: () => import(/* webpackChunkName: "about" */ '../views/member/list.vue'),
+    },
+    {
+        path: '/member/register2',
+        name: '등록',
+        beforeRouteEnter: (to, from, next) => {
+            console.log(to)
+            console.log(from)
+            console.log(next)
+            console.log('beforeRouteEnter')
+            this.$store.dispatch('baseStore/setIsShowBar', false)
+        },
+
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '../views/member/register2.vue'),
+    },
+
+    {
+        path: '/member/login',
+        name: '로그인',
+        beforeRouteEnter: (to, from, next) => {
+            console.log(to)
+            console.log(from)
+            console.log(next)
+            this.$store.dispatch('baseStore/setIsShowBar', false)
+        },
+		component: () => import(/* webpackChunkName: "about" */ '../views/member/login.vue'),
+    },
+        {
+            path: '/banner/reg',
+            name: 'registerbanner',
+            beforeRouteEnter: (to, from, next) => {
+                console.log(to)
+                console.log(from)
+                console.log(next)
+                console.log('beforeRouteEnter')
+                this.$store.dispatch('baseStore/setIsShowBar', false)
+            },
+            component: () =>
+                import ( /* webpackChunkName: "about" */ '../views/banner/bannerReg.vue'),
+        },
+        {
+            path: '/temp/temp01',
+            name: 'temp01',
+            component: () =>
+                import ( /* webpackChunkName: "about" */ '../views/temp/templeate01.vue'),
+        },
+        {
+            path: '/temp/temp02',
+            name: 'temp02',
+            component: () =>
+                import ( /* webpackChunkName: "about" */ '../views/temp/temp02.vue'),
+        },
+    ]
+    //BaseCommon.rest
+routes.push({
+    path: '/temp/daummap',
+    name: 'daummap',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/daummap.vue'),
+})
+
+routes.push({
+    path: '/temp/buttons',
+    name: 'buttons',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/buttons.vue'),
+})
+
+routes.push({
+    path: '/temp/kakaoPostCode',
+    name: 'kakaoPostCode',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/kakaoPostCode.vue'),
+})
+
+routes.push({
+    path: '/temp/temp03',
+    name: 'htmleditor',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/temp03.vue'),
+})
+
+routes.push({
+    path: '/temp/temp04',
+    name: 'dataTableDrag',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/temp04.vue'),
+})
+
+routes.push({
+    path: '/temp/bannerdrag',
+    name: 'bannerdrag',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/bannerDrag.vue'),
+})
+
+routes.push({
+    path: '/temp/bannerdrag2',
+    name: 'bannerdrag2',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/bannerDrag2.vue'),
+})
+
+routes.push({
+    path: '/temp/toastUI',
+    name: 'tostui',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/toastUI.vue'),
+})
+
+routes.push({
+    path: '/temp/tabledesc',
+    name: 'tabledesc',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/tableDesc.vue'),
+})
+
+routes.push({
+    path: '/temp/fileupload',
+    name: 'fileupload',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/fileupload.vue'),
+})
+
+routes.push({
+    path: '/temp/autocomplete',
+    name: 'autocomplete',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/autoComplete.vue'),
+})
+
+routes.push({
+    path: '/temp/register',
+    name: 'register2',
+    component: () => import(/* webpackChunkName: "about" */ '../views/member/register.vue'),
+})
+
+routes.push({
+    path: '/common/commonreg',
+    name: 'commonreg',
+    component: () => import(/* webpackChunkName: "about" */ '../views/common/commonReg.vue'),
+})
+
+routes.push({
+    path: '/menu/menureg',
+    name: 'menureg',
+    component: () => import(/* webpackChunkName: "about" */ '../views/menu/menuReg.vue'),
+})
+
+routes.push({
+    path: '/board/list',
+    name: 'boardlist',
+    component: () => import(/* webpackChunkName: "about" */ '../views/board/list.vue'),
+})
+
+routes.push({
+    path: '/board/register',
+    name: 'boardregister',
+    component: () => import(/* webpackChunkName: "about" */ '../views/board/register.vue'),
+    beforeRouterUpdate: (to, from, next) => {
+        next()
+    },
+})
+
+routes.push({
+    path: '/temp/videopreview',
+    name: 'videoPreview',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/videoPreview.vue'),
+})
+
+routes.push({
+    path: '/temp/bannerupload',
+    name: 'bannerupload',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/bannerUpload.vue'),
+})
+
+routes.push({
+    path: '/statistics/loglist',
+    name: 'loglist',
+    component: () => import(/* webpackChunkName: "about" */ '../views/statistics/loglist.vue'),
+})
+
+routes.push({
+    path: '/search',
+    beforeRouteEnter: (to, from, next) => {
+        console.log(to)
+        console.log(from)
+        console.log(next)
+        this.$store.dispatch('baseStore/setIsShowBar', false)
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/common/search.vue'),
+})
+
+routes.push({
+    path: '/error',
+    component: () => import(/* webpackChunkName: "about" */ '../views/error/error.vue'),
+})
+
+routes.push({
+    path: '/temp/bannerUpload2',
+    component: () => import(/* webpackChunkName: "about" */ '../views/temp/bannerUpload2.vue'),
+})
+
+const router = new VueRouter({
+    mode: 'history',
+    routes,
+})
+
+router.beforeEach((to, from, next) => {
+    // console.log(BaseCommon.memberInfo.getMember())
+    if (!to.matched.length) {
+       // alert("페이지없음")
+         next('/error')
+         return
+      }
+    if (to.path === '/assets/' || to.path === '/member/login' || to.path === '/' || to.path === '/error' || to.path.indexOf('/temp/') >= 0 || to.path.indexOf('/member/') >= 0 || to.path.indexOf('/register/') >= 0 || to.path.indexOf('/banner/') >= 0) {
+        next()
+        return
+    }
+
+    let menu = BaseCommon.MenuInfo.getMenu(to.path)
+
+    //console.log("'/mongodb/insertLog >>>> ", JSON.stringify({page_name:menu.menu_name,page_url:to.path, device_type:"PC"}))
+    BaseCommon.restful
+        .call('/mongodb/insertLog', { page_name: menu.menu_name, page_url: to.path, device_type: 'PC' })
+        .then((res) => {
+            console.log(res)
+        })
+        .catch((e) => {
+            console.log('/mongodb/insertLog error', e)
+        })
+    if (!BaseCommon.memberInfo.getMember().isLogin) {
+        BaseCommon.restful
+            .call('/member/getmyinfo')
+            .then((res) => {
+                //this.isLogin = res.isLogin;
+                BaseCommon.memberInfo.setMember(res)
+                console.log('로그인 정보 확인 >> ', res)
+                console.log('메뉴정보', BaseCommon.memberInfo.getMember())
+
+                if (res != null && res.isLogin) {
+                    next()
+                } else {
+                    next('/member/login')
+                }
+            })
+            .catch((err) => {
+                //this.loginName = "로그인";
+                console.log('에러호출>>>>>', err)
+            })
+    } else {
+        next()
+    }
+    //next()
+    /*if (!BaseCommon.memberInfo.getMember().isLogin) {
+        if (to.path !== "/member/login")
+            next("/member/login")
+        else
+            next()
+    } else { next() }
+*/
+})
+router.afterEach((to, from) => {
+    console.log('afterEach>>', to, from)
+})
+router.beforeResolve((to, from, next) => {
+    if (Config.isFormChange === true) {
+        EventBus.$emit('confirmMessage', Config.msg.checkForm, {}, next)
+    } else next()
+})
+
+export default router

@@ -1,0 +1,97 @@
+
+
+INSERT INTO t_address_location2
+(dong_code , sido_name, sigungu_name, dong_name , search_latitude, search_longitude, latitude, longitude)
+SELECT DISTINCT a.dong_code , sido_name, sigungu_name, dong_name , b.search_latitude, b.search_longitude, b.latitude, b.longitude
+     
+   
+  FROM t_address_location a
+ INNER JOIN t_map_square b 
+    ON a.search_latitude = b.search_latitude
+   AND a.search_longitude = b.search_longitude
+   AND a.latitude >= b.latitude -  0.00125/2.00 AND  a.latitude < b.latitude +  0.00125/2.00 
+   AND a.longitude >= b.longitude -  0.00125/2.00 AND   a.longitude < b.longitude +  0.00125/2.00 
+ 
+     
+   CREATE TABLE t_address_location2
+   (
+   search_latitude DECIMAL(4,2) NOT NULL
+   ,search_longitude DECIMAL(5,2) NOT NULL
+   ,latitude DECIMAL(8,6) NOT NULL
+   ,longitude DECIMAL(9,6) NOT NULL
+   ,dong_code INT(10)
+   ,sido_name VARCHAR(40)
+   ,sigungu_name VARCHAR(40)
+   ,dong_name VARCHAR(40)
+   )
+
+/************************************/
+INSERT INTO t_address_location
+(dong_code , sido_name, sigungu_name, dong_name , search_latitude, search_longitude, latitude, longitude)
+SELECT DISTINCT a.dong_code , sido_name, sigungu_name, dong_name , b.search_latitude, b.search_longitude, b.latitude, b.longitude
+     
+   
+  FROM t_address_location3 a
+ INNER JOIN t_map_square b 
+    ON a.search_latitude = b.search_latitude
+   AND a.search_longitude = b.search_longitude
+   AND a.latitude >= b.latitude -  0.00125/2.00 AND  a.latitude < b.latitude +  0.00125/2.00 
+   AND a.longitude >= b.longitude -  0.00125/2.00 AND   a.longitude < b.longitude +  0.00125/2.00 
+
+/***************************************/
+SET @lat = 37;
+SET @long= 127;
+SET @square_distance = 0.01;
+SET @radius = 5;
+SELECT search_latitude, search_longitude 
+       ,LEFT(dong_code,5)
+FROM t_address_location a
+WHERE  a.search_latitude BETWEEN  @lat - (@square_distance * @radius * @range) AND @lat + (@square_distance* @radius * @range)
+       AND 
+       a.search_longitude BETWEEN @long - (@square_distance * @radius * @range) AND @long + (@square_distance * @radius * @range)
+ AND fn_distance(@lat,@long, search_latitude, search_longitude ) <= @square_distance
+GROUP BY search_latitude, search_longitude;
+
+
+/* 4 ***********************************/
+
+declare @distance numeric(18,6) = 0.00125
+
+SELECT a.dong_code , sido_name, sigungu_name, dong_name , a.search_latitude, a.search_longitude, b.latitude, b.longitude, convert(numeric(18,14), (convert(numeric(18,0),COUNT(1)) / (c.cnt * 1.0000000000)) * 100) as gage_rate
+
+--, count(1), c.cnt
+     
+   into t_address_location_result
+  FROM t_address_location3 a
+  
+ inner JOIN ALTSOFT_ONLINESERVICE.dbo.T_SEARCH_PLACE_SQURE b 
+    ON a.search_latitude = b.search_latitude
+   AND a.search_longitude = b.search_longitude
+   AND a.latitude >= b.latitude -  @distance/2.000 AND  a.latitude < b.latitude +  @distance /2.000
+   AND a.longitude >= b.longitude -  @distance/2.000 AND   a.longitude < b.longitude +  @distance/2.000
+  INNER JOIN (SELECT dong_code, COUNT(1) cnt FROM t_address_location3
+          GROUP BY dong_code) c
+     ON a.dong_code = c.dong_code
+   
+ GROUP BY a.dong_code , sido_name, sigungu_name, dong_name , a.search_latitude, a.search_longitude, b.latitude, b.longitude, c.cnt
+
+ SELECT  COUNT(1) cnt FROM t_address_location3
+where dong_code = '2915512500'       
+
+
+
+
+select left(a.dong_code,5) as code
+     , a.search_latitude, a.search_longitude
+     , a.sido_name,       a.sigungu_name , sum(a.gage_rate) / gage_sum * 100.000 as gage_rate
+into t_address_location_result2
+From t_address_location_result a
+inner join (
+         select left(a.dong_code,5) code, sum(gage_rate) gage_sum
+         from t_address_location_result a
+         group by left(a.dong_code,5)
+        ) b on left(a.dong_code,5) = b.code
+group by left(a.dong_code,5), a.search_latitude, a.search_longitude  , a.sido_name, a.sigungu_name , b.gage_sum
+order by code
+
+create index idx_address_location_result_dong on t_address_location_result (dong_code, search_latitude, search_longitude)

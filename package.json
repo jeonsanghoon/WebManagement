@@ -1,0 +1,15 @@
+{
+  "name": "webmanagement",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@livelybone/vue-datepicker": "^4.0.2",
+    "webpack": "^4.41.5"
+  }
+}

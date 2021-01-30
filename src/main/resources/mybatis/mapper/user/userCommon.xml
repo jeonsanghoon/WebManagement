@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.user.IUserCommonMapper">
+	<select id="getAlamMsgList" 
+			parameterType="com.mrc.db.dto.user.UserAlamMsgCond"
+			resultType="com.mrc.db.dto.user.UserAlamMsgData">
+		
+		<![CDATA[
+		set @member_code := #{memberCode};
+		set @period_day := -30;
+		
+		select row_number() over(order by a.reg_date desc) as row_num
+		   , case when a.diff_days = 0 then '오늘' 
+		          when a.diff_days  < 7 then concat(cast(a.diff_days as varchar(10)), '일전')
+		          when a.diff_days  < 30 then concat(CAST( (floor(a.diff_days / 7)) as varchar(10)), '주전')
+		          else DATE_FORMAT(a.reg_date,'%Y.%m.%d')
+		     end reg_date2
+		   , a.* from (
+		select 1 as alam_type /*1 배너요청(t_banner_request), 2 bookmark(t_member_bookmark)*/ 
+		      ,a.request_code as code
+		      ,a.banner_code as code2
+		      ,case when a.status = 1 then concat('<span class="ondaji_font_13_medium_tealgreen_40">', c.member_name ,'님</span>','이 배너 공유 요청을 보냈습니다.') 
+		            when a.status = 4 then concat('<span class="ondaji_font_13_medium_tealgreen_40">', c.member_name ,'님</span>','이 배너 공유 요청을 거절하였습니다.')       
+		            when a.status = 9 then concat('<span class="ondaji_font_13_medium_tealgreen_40">', c.member_name ,'님</span>','이 배너 공유 요청을 승인하였습니다.')
+		            else '' end
+		      as title
+		      ,b.title as content
+		      ,dateDIFF( NOW(), a.update_date ) as diff_days
+		      ,a.request_member_code as member_code
+		      ,c.member_name 
+		      ,a.update_date reg_date
+		      
+		from t_banner_request a
+		inner join t_banner b
+		  on a.banner_code = b.banner_code
+		inner join t_member c
+		  on case when a.status = 1 then a.request_member_code else a.approval_member_code end = c.member_code
+		where b.member_code = @member_code
+		 and a.update_date > DATE_ADD(NOW(), INTERVAL @period_day DAY)
+		union all
+		select  case when d1.update_date > a.insert_date then 9 else  1 + a.bookmark_type end as alam_type
+		     , a.bookmark_code code
+		     , case when a.bookmark_type = 1 then a.banner_code else d.localbox_code end as code2
+		     , case when d1.update_date > a.insert_date then concat('<span class="ondaji_font_13_medium_tealgreen_40">', dm.member_name ,'님</span>','의 새로운 배너를 확인해보세요.')
+		            else concat('<span class="ondaji_font_13_medium_tealgreen_40">', b.member_name ,'님</span>','이 ', case when a.bookmark_type = 1 then '배너' else '로컬박스' end,  '를 북마크에 추가하였습니다.') end as title
+		     , case when a.bookmark_type = 1 then c.title else dm.member_name end as content
+		      ,dateDIFF( NOW(), a.insert_date ) as diff_days
+		     , a.member_code 
+		     , b.member_name     
+		     , a.insert_date reg_date
+		   from t_member_bookmark a
+		  inner join t_member b
+		     on a.member_code = b.member_code
+		   LEFT join t_banner c
+		     on a.banner_code = c.banner_code
+		   LEFT join t_localbox d
+		     on a.localbox_code = d.localbox_code
+		   left join (select localbox_code, max(update_date) as update_date from t_localbox_banner
+		               group by localbox_code) d1
+		          on d.localbox_code = d1.localbox_code
+		   left join t_member dm
+		     on d.member_code = dm.member_code
+		  where (a.member_code = @member_code or c.member_code = @member_code or d.member_code = @member_code)
+		    and a.insert_date > DATE_ADD(NOW(), INTERVAL @period_day DAY)
+		 ) a 
+		limit ${page}, ${pageSize}
+     ;
+]]>
+	</select>
+	
+	
+</mapper>

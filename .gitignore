@@ -1,0 +1,51 @@
+HELP.md
+.gradle
+build/
+bin/
+node_modules/
+vue/node_modules/
+!**/vue/node_modules/**
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/**
+tmp/**
+tmp/**/*
+static/**
+static2/**
+!**/resources/static/**
+!**/resources/static2/**
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+bin/**
+tmp/**
+tmp/**/*
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+/bin/
+bin/**
+tmp/**
+tmp/**/*

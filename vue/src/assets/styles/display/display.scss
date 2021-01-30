@@ -1,0 +1,115 @@
+@use 'sass:map';
+@use 'sass:string';
+
+/**
+    Color System
+**/
+
+$colors: (
+  "grey_100": #000000,
+  "grey_90": #242424,
+  "grey_80": #424242,
+  "grey_70": #616161,
+  "grey_60": #757575,
+  "grey_50": #aaaaaa,
+  "grey_40": #bdbdbd,
+  "grey_30": #c4c4c4,
+  "grey_20": #e0e0e0,
+  "grey_10": #f2f2f2,
+  "grey_5": #fafafa,
+  "white": #ffffff,
+  "brown_100": #231815,
+  "brown_90": #403532,
+  "brown_80": #3e2723,
+  "brown_70": #938783,
+  "brown_60": #c0afaa,
+  "brown_50": #c6b8b4,
+  "brown_40": #c2b7b3,
+  "brown_30": #d1c8c6,
+  "brown_20": #e2d9d2,
+  "brown_10": #f5eee8,
+  "tealgreen_100": #005d3b,
+  "tealgreen_90": #007a56,
+  "tealgreen_80": #028a64,
+  "tealgreen_70": #069b73,
+  "tealgreen_60": #0ba880,
+  "tealgreen_50": #24b791,
+  "tealgreen_40": #50c5a4,
+  "tealgreen_30": #84d6be,
+  "tealgreen_20": #b4e6d7,
+  "tealgreen_10": #e1f5f0,
+  "green_100": #2e7d32,
+  "green_40": #00c853,
+  "green_10": #e0f8e2,
+  "blue_90": #1565c0,
+  "blue_70": #2979ff,
+  "blue_30": #64b5f6,
+  "blue_20": #bbdefb,
+  "yellow_80": #f57f17,
+  "yellow_10": #ffecb3,
+  "red_60": #e53935,
+);
+
+$fontWeights: (
+  lthin: 300,
+  thin: 400,
+  medium: 500,
+  bold: 600,
+);
+
+$fonts: (
+  36: 2rem,
+  30: 1.875rem,
+  24: 1.5rem,
+  20: 1.25rem,
+  18: 1.125rem,
+  16: 1rem,
+  14: 0.875rem,
+  13: 0.813rem,
+  12: 0.75rem,
+  11: 0.6875rem,
+  10: 0.625rem,
+);
+
+.ondaji.Local,
+.ondaji.User {
+  .ondaji {
+    &_color {
+      @each $fontColorKey, $fontColorVal in $colors {
+        &_#{$fontColorKey} {
+          background-color: $fontColorVal !important;
+        }
+      }
+    }
+
+    &_font {
+      @each $fontSizeKey, $fontSizeVal in $fonts {
+        @each $fontWeightKey, $fontWeightVal in $fontWeights {
+          @each $fontColorKey, $fontColorVal in $colors {
+            &_#{$fontSizeKey} {
+              &_#{$fontWeightKey} {
+                &_#{$fontColorKey} {
+                  font-size: $fontSizeVal !important;
+                  font-weight: $fontWeightVal !important;
+                  color: $fontColorVal !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@include desktop {
+  @import "@/assets/styles/display/pc.scss";
+}
+
+@include tablet {
+  @import "@/assets/styles/display/tablet.scss";
+}
+
+@include mobile {
+  @import "@/assets/styles/display/mobile.scss";
+}

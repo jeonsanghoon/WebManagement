@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.MemberMapper">
+	<select id="getList"
+		parameterType="com.mrc.db.dto.member.MemberCond"
+		resultType="com.mrc.db.dto.member.Member">
+	SELECT m.*
+	     , mc.company_name
+		 , mc.branch_name
+	     , mc.business_type
+		 , mc.business_number
+	     , mc.profit_type
+		 , mc.update_code company_update_code
+	     , mc.update_date company_update_date
+	     , lb.localbox_code
+		 , lb.profile_url
+		 , lbp.region area_name
+		 , lbp.address
+		 , lbp.zip_code
+		 , lbp.address_detail
+		 , tc.name as auth_type_name
+		 , bt.name as business_type_name
+	  from t_member m
+     inner join t_common tc
+		on tc.main_code = 'A001'
+       and tc.sub_code  = m.auth_type
+	  left join t_member_company mc
+		on m.member_code = mc.member_code
+      left join t_business_type bt
+		on mc.business_type = bt.code
+	  left join t_localbox lb
+	    on m.member_code = lb.member_code
+	  left join t_localbox_place lbp
+		on lb.localbox_code = lbp.localbox_code
+
+		<where>
+			<if test="memberCode != null ">
+				and m.member_code = #{memberCode}
+			</if>
+			<if test="token != null ">
+				and m.token = #{token} 
+			</if>
+			<if test="memberId != null and memberId != '' ">
+				and m.member_id = #{memberId}
+			</if>
+
+			<if test="birthDate != null and birthDate != '' ">
+				and ( (length(#{birthDate}) = 8 and m.birth_date = #{birthDate})
+				     or (length(#{birthDate}) = 6 and m.birth_date like concat('%', #{birthDate}))
+				    )
+
+			</if>
+			<if test="memberPw != null and memberPw != '' ">
+				and m.member_pw = #{memberPw}
+			</if>
+			<if test="memberName != null and memberName != '' ">
+				and m.member_name like CONCAT('%', #{memberName}, '%')
+			</if>
+			<if test="authType != null ">
+				and m.auth_type like #{authType})
+			</if>
+			<if test="hide != null  ">
+				and m.hide = #{hide}
+			</if>
+			<if test="businessNumber != null and businessNumber != ''  ">
+				mc.business_number = #{businessNumber}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getCompanyList"
+		parameterType="com.mrc.db.dto.member.MemberCond"
+		resultType="com.mrc.db.dto.member.MemberCompany">
+		select mc.*
+		  from t_member_company mc
+		 
+		<where>
+			<if test="memberCode != null ">
+				and mc.member_code = #{memberCode}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getSearchList"
+		parameterType="com.mrc.db.dto.member.MemberCond"
+		resultType="com.mrc.db.dto.member.MemberList">
+		select  a.member_code, a.member_id, a.member_name
+              , b.name AS auth_type_name, a.member_img
+              , c.file_size AS member_imgsize
+              , birth_date
+		  from t_member a
+		 inner join t_common b
+		    on b.main_code = 'A001' 
+		   and b.sub_code  = a.auth_type
+		  left join t_file c
+		    on c.table_name = 't_member'
+		   and c.table_key = CAST(a.member_code AS CHAR(10))
+		   and c.file_seq = 1
+		   
+		<where>
+			<if test="memberCode != null ">
+				and a.member_code = #{memberCode}
+			</if>
+			<if test="token != null ">
+				and a.token = #{token}
+			</if>
+			<if test="memberId != null and memberId != '' ">
+				and a.member_id  LIKE CONCAT('%', #{memberId}, '%')
+			</if>
+			
+			<if test="memberName != null and memberName != '' ">
+				and a.member_name LIKE CONCAT('%', #{memberName}, '%')
+			</if>
+			<if test="hide != null  ">
+				and hide = #{hide}
+			</if>
+		</where>
+	</select>
+
+	<insert id="save" keyProperty="memberCode" parameterType="com.mrc.db.dto.member.Member" >
+		INSERT INTO t_member
+					(
+						member_id, 
+						member_name, 
+						nickname, 
+						member_pw, 
+						auth_type, 
+						birth_date, 
+						phone, 
+						service, 
+		 			 	hide, 
+		 			 	insert_code, 
+		 			 	insert_date, 
+		 			 	update_code, 
+		 			 	update_date
+		 			 )
+			  values(
+			  			#{memberId},
+			  			#{memberName},
+			  			#{nickname}, 
+			  			#{memberPw},
+			  			#{authType},
+			  			#{birthDate},
+			  			#{phone}, 
+			  			#{service},
+		        		#{hide},  
+		        		#{insertCode},
+		        		current_timestamp(), 
+		        		#{insertCode},
+		        		current_timestamp()
+		        	)
+		 ON DUPLICATE KEY UPDATE 
+		    member_name = #{memberName}
+		  , member_pw   = #{memberPw}
+		  , auth_type   = #{authType}
+		  , birth_date  = #{birthDate}
+		  , phone 		= #{phone}
+		  , service 	= #{service}	
+		  , hide        = #{hide} 
+		  , update_code = #{insertCode}
+		  , update_date = current_timestamp();
+		  
+		<selectKey resultType="int"  keyProperty="memberCode" order="AFTER">
+        	SELECT LAST_INSERT_ID() as member_code;
+  		</selectKey>    
+	</insert>
+	
+	<insert id="saveMemberCompany" keyProperty="memberCode" parameterType="com.mrc.db.dto.member.Member" >
+		INSERT INTO t_member
+					(
+						member_id, 
+						member_name, 
+						nickname, 
+						member_pw, 
+						auth_type, 
+						birth_date, 
+						phone, 
+						service, 
+		 			 	hide, 
+		 			 	insert_code, 
+		 			 	insert_date, 
+		 			 	update_code, 
+		 			 	update_date
+		 			 )
+			  values(
+			  			#{memberId},
+			  			#{memberName},
+			  			#{nickname}, 
+			  			#{memberPw},
+			  			#{authType},
+			  			#{birthDate},
+			  			#{phone}, 
+			  			#{service},
+		        		#{hide},  
+		        		#{insertCode},
+		        		current_timestamp(), 
+		        		#{insertCode},
+		        		current_timestamp()
+		        	)
+		 ON DUPLICATE KEY UPDATE 
+		    member_name = #{memberName}
+		  , member_pw   = #{memberPw}
+		  , auth_type   = #{authType}
+		  , birth_date  = #{birthDate}
+		  , phone 		= #{phone}
+		  , service 	= #{service}	
+		  , hide        = #{hide} 
+		  , update_code = #{insertCode}
+		  , update_date = current_timestamp();
+				
+			<if test="memberCode != null ">
+				SET @member_code = #{memberCode};
+			</if>
+			<if test="memberCode == null ">
+				SET @member_code = LAST_INSERT_ID();
+			</if>
+		
+		INSERT INTO t_member_company
+					(
+						member_code, 
+						company_name,
+						branch_name, 
+						business_type, 
+						business_number,
+						profit_type,
+		 			 	update_code, 
+		 			 	update_date
+		 			 )
+			  values(
+			  			@member_code,  
+			  			#{companyName},
+			  			#{branchName},
+			  			#{businessType},
+			  			#{businessNumber},
+			  			#{profit_type},
+		        		#{updateCode},
+		        		current_timestamp()
+		        	)
+		  ON DUPLICATE KEY UPDATE 
+		    company_name 		= #{companyName}
+		  , branch_name			= #{branchName}
+		  , business_type   	= #{businessType}
+		  , business_number   	= #{businessNumber}
+		  , profit_type  		= #{profit_type}
+		  , update_code 		= #{updateCode}
+		  , update_date 		= current_timestamp();
+		 
+		<selectKey resultType="int"  keyProperty="member_code" order="AFTER">
+        	SELECT @member_code;
+  		</selectKey>    
+	</insert>
+
+	<delete id="delete" parameterType="com.mrc.db.dto.member.Member">
+		delete from t_member
+		<where>
+			<if test="memberCode != null ">
+				and member_code like #{memberCode}
+			</if>
+			<if test="memberId != null and memberId != '' ">
+				and member_id = #{memberId}
+			</if>
+		</where>
+   </delete>
+
+	<update id="changePassword" parameterType="com.mrc.db.dto.member.MemberCond" >
+		update t_member
+           set member_pw = #{memberPw}
+             , update_code = #{insertCode}
+             , update_date = current_timestamp()
+		 where member_code = #{memberCode};
+	</update>
+	
+	<update id="changeToken" parameterType="com.mrc.db.dto.member.Member" >
+		update t_member
+           set token = #{token}
+             , update_code = #{insertCode}
+             , update_date = current_timestamp()
+		 where member_code = #{memberCode};
+	</update>
+
+	<update id="update" parameterType="com.mrc.db.dto.member.Member">
+
+		update t_member
+		   set member_id   = #{memberId}
+		      ,member_name = #{memberName}
+		      ,member_pw   = #{memberPw}
+              ,auth_type   = #{authType}
+		      ,member_img  = #{member_img}
+		      ,birth_date  = #{birthDate}
+		      ,hide        = #{hide}
+		      ,update_code = #{insertCode}
+		      ,update_date = current_timestamp()
+		where member_code = #{memberCode};
+
+	</update>
+	<select id="getBusinessType" parameterType="com.mrc.db.dto.member.BusinessTypeCond" resultType="com.mrc.db.dto.member.BusinessType">
+		select code, name
+		  from t_business_type
+		  
+		<where>
+			<if test="level != null and level != '' ">
+				and level = #{level}
+			</if>
+			<if test="parentCode == null ">
+				and parent_code is null
+			</if>
+			<if test="parentCode != null and parentCode != '' ">
+				and parent_code = #{parentCode}
+			</if>
+		</where>
+	</select>
+	<select id="dupConfirm" parameterType="com.mrc.db.dto.member.Member" resultType="int">
+		select 1
+		  from t_member
+		  
+		<where>
+			<if test="memberId != null and memberId != '' ">
+				and member_id = #{memberId}
+			</if>
+			<if test="nickname != null and nickname != '' ">
+				and nickname = #{nickname} 
+			</if>
+			<if test="memberCode != null ">
+				and member_code != #{memberCode}
+			</if>
+		</where>
+	</select>
+	<select id="dupConfirmCompany" parameterType="com.mrc.db.dto.member.MemberCompany" resultType="int">
+		select 1
+		  from t_member_company
+		<where>
+			<if test="companyName != null and companyName != '' ">
+				and company_name = #{companyName}
+			</if>
+			<if test="branchName != null and branchName != '' ">
+				and branch_name = #{branchName}
+			</if>
+			<if test="businessNumber != null and businessNumber != '' ">
+				and business_number = #{businessNumber}
+			</if>
+			<if test="chkMemberCode != null  ">
+				and member_code != #{chkMemberCode}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="memberAuthSave" keyProperty="idx" parameterType="com.mrc.db.dto.member.MemberAuth" >
+		INSERT INTO MemberAuth
+					(
+						member_code, 
+						auth_number,
+						limit_time,
+						auth_time,
+						remark,
+						insert_code, 
+		 			 	insert_date, 
+		 			 	update_code, 
+		 			 	update_date
+		 			 )
+			  values(
+			  			#{memberCode},
+			  			#{authNumber},
+			  			#{limitTime},
+			  			#{authTime},
+			  			#{remark}, 
+			  		    #{insertCode},
+		        		current_timestamp(), 
+		        		#{insertCode},
+		        		current_timestamp()
+		        	)
+		 ON DUPLICATE KEY UPDATE 
+		    member_code = #{memberCode}
+		  , auth_time  = #{authTime}
+		  , remark 	    = #{remark}	
+		  , update_code = #{insertCode}
+		  , update_date = current_timestamp();
+		  
+		<selectKey resultType="int"  keyProperty="idx" order="AFTER">
+        	SELECT LAST_INSERT_ID() as member_code;
+  		</selectKey>    
+	</insert>
+	<update id="memberAuthUpdate" keyProperty="idx" parameterType="com.mrc.db.dto.member.MemberAuth" >
+		
+		update MemberAuth
+		   set member_code = #{memberCode}
+		     , auth_time   = current_timestamp()
+		     , remark 	   = #{remark}	
+		     , update_code = #{insertCode}
+		     , update_date = current_timestamp()
+		 where member_code =  #{memberCode}
+		   <![CDATA[ and idx < #{idx}  ]]>
+		   and auth_time is null;
+		 
+		update MemberAuth
+		   set member_code = #{memberCode}
+		     , auth_time   = current_timestamp()
+		     , remark 	   = #{remark}	
+		     , update_code = #{insertCode}
+		     , update_date = current_timestamp()
+		 where idx         = #{idx};
+		  
+		    
+	</update>
+	<select id="getMemberAuthNumber" parameterType="com.mrc.db.dto.member.MemberAuth" resultType="com.mrc.db.dto.member.MemberAuth">
+		select a.*
+		  from MemberAuth a
+		  	<where>
+			<if test="memberCode != null ">
+				and a.member_code = #{memberCode}
+			</if>
+			<if test="authNumber != null ">
+				and a.auth_number = #{authNumber}
+			</if>
+			</where>
+		  order by a.idx desc
+		
+	</select>
+
+	<update id="myInfoUpdate" keyProperty="idx" parameterType="com.mrc.db.dto.member.MemberInfo" >
+		set @member_code     = #{memberCode};
+		set @phone           = #{phone};
+		set @business_type   = #{businessType};
+		set @business_number = #{businessNumber};
+		set @address         = #{address};
+		set @road_address    = #{roadAddress};
+		set @address_detail  = #{addressDetail};
+		set @zip_code        = #{zipCode};
+		set @reg_code        = #{reg_code};
+
+		update t_member
+		   set phone = @phone
+		      ,update_code = @reg_code
+		      ,update_date = current_timestamp()
+		 where member_code = @member_code;
+
+		update t_member_company
+		   set business_type   = @business_type
+		      ,business_number = @business_number
+		      ,update_code     = @reg_code
+		      ,update_date     = current_timestamp()
+		 where member_code     = @member_code;
+
+		update t_localbox_place a
+		 inner join t_localbox b
+		    on a.localbox_code = b.localbox_code
+		   set a.address       = @address
+		      ,a.road_address  = @road_address
+		      ,a.zip_code      = @zip_code
+		      ,a.update_code   = @reg_code
+		      ,a.update_date   = current_timestamp()
+		 where b.member_code   = @member_code;
+
+
+	</update>
+</mapper>

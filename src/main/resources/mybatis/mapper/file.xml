@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.FileMapper">
+	<select id="getList"
+		parameterType="com.mrc.db.dto.file.FileCond"
+		resultType="com.mrc.db.dto.file.File">
+		select row_number() over(order by a.file_code) as idx
+		      , a.*
+		from t_file a
+		<where>
+		    <if test="fileCode != null ">
+				and a.file_code = #{fileCode}
+			</if>
+			<if test="tableName != null and tableName !='' ">
+				and a.table_name = #{tableName}
+			</if>
+			<if test="tableKey != null and tableKey != '' ">
+				and a.table_key = #{tableKey}
+			</if>
+		</where>
+	</select>
+
+	<insert id="save" parameterType="com.mrc.db.dto.file.File" >
+		set @file_seq := #{fileSeq};
+		<if test="fileSeq == null ">
+			select ifnull(max(file_seq),0) + 1 into @file_seq
+			  from t_file;
+
+		</if>
+
+		INSERT INTO t_file
+		(table_name, table_key, file_seq, file_size, file_name, file_ext, file_url, remark, insert_code, insert_date )
+		
+		values( #{tableName} ,#{tableKey} ,@file_seq ,#{fileSize} ,#{fileName} ,#{fileExt} ,#{fileUrl} ,#{remark} ,#{insertCode} ,current_timestamp())
+		 ON DUPLICATE KEY UPDATE 
+		    table_name    = #{tableName}
+		  , table_key     = #{tableKey}
+		  , file_seq      = @file_seq
+		  , file_size     = #{fileSize}
+		  , file_name     = #{fileName}
+		  , file_ext      = #{fileExt}
+		  , file_url      = #{fileUrl}
+		  , remark        = #{remark}
+		  , insert_code   = #{insertCode}
+		  , insert_date   = current_timestamp();
+	</insert>
+
+
+
+	<delete id="delete" parameterType="com.mrc.db.dto.file.File">
+		delete from t_file
+		where fileCode = #{fileCode}
+   </delete>
+	<update id="update" parameterType="com.mrc.db.dto.file.File">
+
+		 update t_file
+			set table_name    = #{tableName}
+			  , table_key     = #{tableKey}
+			  , file_seq      = #{fileSeq}
+			  , file_size     = #{fileSize}
+			  , file_name     = #{fileName}
+			  , file_ext      = #{fileExt}
+			  , file_url      = #{fileUrl}
+			  , remark        = #{remark}
+			  , insert_code   = #{insertCode}
+			  , insert_date   = current_timestamp();
+		where fileCode = #{fileCode}
+
+	</update>
+</mapper>

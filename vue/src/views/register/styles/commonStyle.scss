@@ -1,0 +1,30 @@
+span {
+    font-weight: bold;
+    color: #6c5f5c;
+}
+
+@mixin button-common-style {
+    font: {
+        weight: bold;
+    }
+    color: white;
+}
+
+.select-button {
+    @include button-common-style;
+    background: #3E2723;
+}
+
+.select-button:hover {
+    @include button-common-style;
+    background: #4E342E;
+}
+
+.none-select-button {
+    @include button-common-style;
+    background: #aea6a4;
+}
+  
+.none-select-button:hover {
+    background: #6c5f5c;
+}

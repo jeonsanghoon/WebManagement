@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.user.IUserLocalboxMapper">
+
+	<select id="getList" 
+			parameterType="com.mrc.db.dto.user.UserSearchCond"
+			resultType="com.mrc.db.dto.user.UserLocalboxList">
+		
+		SET @area_code := #{areaCode};
+
+		SELECT latitude, longitude 
+		   INTO @latitude, @longitude
+		FROM t_address_area
+		WHERE  CODE = @area_code;
+		 
+		SELECT a.member_code
+		     , a.member_name
+		     , IFNULL(CONCAT(a1.company_name,' ', a1.branch_name), a.member_name) AS name
+		     , c.desc
+		     , c.profile_url
+		     , d.address
+		     , CONCAT(fn_split(d.address,' ',2),' ', fn_split(d.address,' ',3)) AS area_address
+		     , d.localbox_code
+		     , CASE WHEN e.bookmark_code IS NULL THEN 0 ELSE 1 END AS is_bookmark
+		     , e.bookmark_code
+		     , fn_distance(@latitude, @longitude, d.latitude, d.longitude) AS distance
+		  FROM t_member a
+		 LEFT JOIN t_member_company a1
+		    ON a.member_code = a1.member_code
+		 INNER JOIN t_localbox c
+		    ON a.member_code = c.member_code
+		  LEFT JOIN t_localbox_place d
+		    ON c.localbox_code = d.localbox_code
+		  LEFT JOIN t_member_bookmark e
+		    ON e.bookmark_type = 2
+		   AND e.localbox_code = c.localbox_code
+		   AND e.member_code = #{memberCode}
+		   	<where>
+			
+                 <if test="keywordCode != null">
+		 			and (localbox_code IN (SELECT localbox_code FROM t_localbox_keyword 
+		                          		   WHERE keywrod_code = #{keywordCode}
+		                                 )
+							<choose>
+                			<when test="keywordName != null and keywordName != '' ">
+								OR  (a1.company_name like concat('%',#{keywordName},'%')
+				 			          or a1.branch_name like concat('%',#{keywordName},'%')
+				 			          or a.member_name like concat('%',#{keywordName},'%')
+				 			          or c.desc like concat('%',#{keywordName},'%')
+				 			        ) 
+		 			        </when>
+		 			        </choose>
+		 			  )
+                 </if>
+                 <if test="keywordCode == null and keywordName != null and keywordName != ''">
+		 			and (a1.company_name like concat('%',#{keywordName},'%')
+		 			     or a1.branch_name like concat('%',#{keywordName},'%')
+		 			     or a.member_name like concat('%',#{keywordName},'%')
+		 			     or c.desc like concat('%',#{keywordName},'%')
+		 			    ) 
+		 			
+                 </if>
+				<if test="isBookmark">
+					and e.bookmark_code is not null
+				</if>
+            </where>
+    		order by ${orderBy};
+
+	</select>
+	<select id="getDetail" 
+			parameterType="com.mrc.db.dto.user.UserSearchCond"
+			resultType="com.mrc.db.dto.user.UserLocalboxDetail">
+			set @localbox_code := #{searchCode};
+			select a.member_code
+			     , a.member_name
+		         , a.auth_type
+			     , b.localbox_code
+			     , b.name as localbox_name
+				 , case when ifnull(b.phone,'') ='' then a.phone else b.phone end as phone
+			     , b.profile_url
+			     , b.desc
+			     , b.announce
+			     , c.bookmark_code
+			     , case when c.bookmark_code is null then 0 ELSE 1 END AS is_bookmark
+			     , c.bookmark_cnt
+			     , b.business_time
+			     , ac.business_type
+			     , bt.name as business_type_name
+			     , d.frame1_cnt
+			     , d.frame6_cnt
+			     , bp.address
+			     , bp.road_address
+			     , bp.address_detail
+			     , e.code as area_code
+			     , CONCAT(e.sigungu_name,' ', e.dong2_name) AS area_name
+			 from t_member a
+			 LEFT join t_member_company ac
+			    on a.member_code = ac.member_code
+			 LEFT join t_business_type bt
+			    on ac.business_type = bt.code
+			 inner join t_localbox b
+			    on a.member_code = b.member_code
+			 inner join t_localbox_place bp
+			    on b.localbox_code = bp.localbox_code
+			  left join (select localbox_code
+			                    ,max(case when member_code = @member_code then bookmark_code else null end) as bookmark_code
+			                    ,count(*) bookmark_cnt 
+			              from t_member_bookmark 
+			             where bookmark_type = 2
+			           group by localbox_code
+			           ) c
+			    on b.localbox_code = c.localbox_code
+			  left join (select member_code
+			                  , sum(case when frame_type = 1 then 1 else 0 end) as frame1_cnt 
+			                  , sum(case when frame_type = 6 then 1 else 0 end) as frame6_cnt 
+			               from t_signage
+			              group by member_code
+			            ) d on a.member_code = d.member_code
+             left join v_address_area e
+               on (e.sido_name = fn_split(bp.address,' ',1) or e.dis_sido_name = fn_split(bp.address,' ',1))
+              and e.sigungu_name = fn_split(bp.address,' ',2)
+              and e.dong2_name = fn_split(bp.address,' ',3)			            
+			  where b.localbox_code = @localbox_code;
+		
+						   
+
+	</select>
+	
+</mapper>

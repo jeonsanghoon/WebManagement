@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.user.IUserBannerMapper">
+
+	<select id="getList" 
+			parameterType="com.mrc.db.dto.user.UserSearchCond"
+			resultType="com.mrc.db.dto.user.UserBannerList">
+		
+		
+		<if test="keywordCode != null ">
+			 update t_keyword
+			 	set search_cnt  = search_cnt + 1
+			  where keyword_code = #{keywordCode};
+		</if>
+				
+		SET @area_code := #{areaCode};
+		
+		SELECT a.banner_code
+		      ,a.title
+		      ,a.sub_title
+		      ,a.banner_type
+		      ,a.content
+		      ,CONCAT('/files/',a.thumb_image_url) AS thumb_image_url
+		      ,a.search_cnt
+		      ,TIMESTAMPDIFF( MINUTE,  a.update_date, NOW()) AS diff_min
+		      ,b1.area_data
+		      ,b1.max_gate
+		      ,a.member_code
+		      ,am.member_name
+		      ,c.name AS localbox_name
+		      ,c.profile_url
+		      ,e.bookmark_code
+		      ,CASE WHEN e.bookmark_code IS NULL THEN 0 ELSE 1 END AS is_bookmark
+		      ,a.update_date upd
+		  FROM t_banner a
+		 INNER JOIN t_member am
+		    on a.member_code = am.member_code
+		 INNER JOIN 
+			(
+				SELECT b.banner_code, MIN(place_code) AS place_code
+				FROM  (SELECT banner_code, MIN(place_code) place_code, area_code,  NAME
+				            , (SUM(gage_rate) / COUNT(*)) AS gage_rate 
+				         FROM t_banner_place_square 
+				        GROUP BY banner_code, area_code, NAME) b
+			<if test="areaCode != null">
+				WHERE (b.area_code LIKE CONCAT(@area_code,'%')
+				OR b.area_code = SUBSTR(@area_code,1,2)
+				OR b.area_code = SUBSTR(@area_code,1,5)
+				)
+			</if>
+				GROUP BY b.banner_code
+			)
+			b
+		    ON a.banner_code = b.banner_code
+		 INNER JOIN (SELECT place_code
+					,MAX(CASE WHEN @area_code = area_code THEN gage_rate ELSE 0 END) AS max_gate
+					,GROUP_CONCAT(
+						CONCAT(area_code,'-',NAME,'-', CAST(gage_rate AS VARCHAR(10))) 
+						ORDER BY gage_rate DESC
+					) AS area_data
+				FROM t_banner_place_square A
+				GROUP BY place_code) b1
+			ON b.place_code = b1.place_code
+		  LEFT JOIN (
+			   SELECT b.banner_code, a.profile_url, a.name
+			     FROM t_localbox a
+			    INNER JOIN t_localbox_banner b
+			       ON a.localbox_code = b.localbox_code
+			    LIMIT 1
+		    ) c ON a.banner_code = c.banner_code
+		  LEFT JOIN t_member_bookmark e
+		    ON e.bookmark_type = 1
+		   AND e.banner_code = a.banner_code
+		   AND e.member_code = #{memberCode}
+		 WHERE a.status = 99
+			<if test="isBookmark">
+				and e.bookmark_code is not null
+			</if>
+			<choose>
+			  	<when test="keywordCode == null and keywordName != null and keywordName != ''  ">
+			  		 AND 
+						 ( a.title LIKE CONCAT('%', #{keywordName},'%')
+						 	      or a.sub_title LIKE CONCAT('%', #{keywordName},'%')
+						        )    
+			  	</when>
+			  	<when test="keywordCode != null ">
+			  		  	and (a.banner_code IN (select banner_code from t_banner_keyword
+						                      where keyword_code = #{keywordCode}
+						                     )
+						    <choose>
+                			<when test="keywordName != null and keywordName != '' ">
+						     OR
+						        ( a.title LIKE CONCAT('%', #{keywordName},'%')
+						 	      or a.sub_title LIKE CONCAT('%', #{keywordName},'%')
+						        )                
+						    )
+						    </when>
+						    </choose>
+			  	</when>
+			</choose>
+			 
+		ORDER BY ${orderBy};
+    
+
+	</select>
+	<select id="getDetail" 
+			parameterType="com.mrc.db.dto.user.UserSearchCond"
+			resultType="com.mrc.db.dto.user.UserBannerDetail">
+		
+		
+		set @banner_code := #{searchCode};
+		set @member_code := #{memberCode};
+		set @add_search_cnt := #{addSearchCnt};
+		update t_banner
+		   set search_cnt = IFNULL(search_cnt,0) + @add_search_cnt
+		 where banner_code = @banner_code;
+		select a.banner_code
+		     , a.banner_type
+		     , a.title
+		     , a.sub_title
+		     , a.content
+		     , a.member_code
+		     , b.member_name
+		     , ab.bookmark_code
+		     , a.play_type
+		     , a.banner_image_url
+		     , a.banner_movie_url
+		     , CASE WHEN ab.bookmark_code IS NULL THEN 0 ELSE 1 END AS is_bookmark
+		     , ab.bookmark_cnt
+		     , c.localbox_code
+		     , IFNULL(c.name,'') as localbox_name
+		     , d.latitude 
+		     , d.longitude 
+		     , d.address
+		     , keywords
+		     , a.search_cnt
+		     , TIMESTAMPDIFF( MINUTE,  a.update_date, NOW()) AS diff_min
+		     , c.profile_url
+		     , c.desc
+		     , e.code as area_code
+		     , CONCAT(fn_split(d.address,' ',2),' ', fn_split(d.address,' ',3)) AS area_name
+		  from t_banner a
+		  LEFT JOIN (select banner_code, count(*) as bookmark_cnt, 
+		                    max(case when member_code = @member_code then bookmark_code else null end) as bookmark_code
+			    from T_member_bookmark 
+		           where bookmark_type = 1 
+		           group by banner_code
+		    ) ab
+		   on a.banner_code = ab.banner_code
+		  INNER JOIN ( SELECT a.banner_code
+		                    , GROUP_CONCAT(CONVERT(a.keyword_code,varchar(10)), '|' , b.keyword_name) as keywords
+				 FROM t_banner_keyword a
+				INNER JOIN t_keyword b
+				   ON a.keyword_code = b.keyword_code
+				GROUP BY a.banner_code) ak
+		  on a.banner_code = ak.banner_code
+		    
+		 inner join t_member b
+		    on a.member_code = b.member_code
+		 
+		  LEFT JOIN t_localbox c
+		    on a.member_code = c.member_code
+		  left join t_localbox_place d
+		    on c.localbox_code = d.localbox_code  
+		  left join v_address_area e
+            on (e.sido_name = fn_split(d.address,' ',1) or e.dis_sido_name = fn_split(d.address,' ',1))
+           and e.sigungu_name = fn_split(d.address,' ',2)
+           and e.dong2_name = fn_split(d.address,' ',3)
+		 where a.banner_code = @banner_code;
+
+	</select>
+	
+	
+</mapper>

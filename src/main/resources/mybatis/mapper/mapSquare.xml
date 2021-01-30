@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrc.db.mapper.MapSquareMapper">
+	<select id="getList" parameterType="com.mrc.db.dto.address.MapSquareCond" resultType="com.mrc.db.dto.address.MapSquare">
+		select a.square_code
+		      ,a.search_latitude
+		      ,a.search_longitude
+		      ,a.latitude
+		      ,a.longitude
+		  from t_map_square a
+		
+		<where>
+			
+			
+			<if test="squareCode != null ">
+				and a.square_code = #{squareCode}
+			</if>
+			<if test="searchLatitude != null ">
+				and search_latitude = #{searchLatitude}
+			</if>
+			<if test="searchLongitude != null ">
+				and search_longitude = #{searchLongitude}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="save" keyProperty="squareCode" parameterType="com.mrc.db.dto.address.MapSquare" >
+		INSERT INTO t_map_square
+				  (	
+				  	square_code
+		           ,search_latitude
+		           ,search_longitude
+		           ,latitude
+		           ,longitude
+				  )
+		    values(  
+		    	   #{squareCode},
+		    	   #{searchLatitude},
+		    	   #{searchLongitude},
+		    	   #{latitude},  
+		    	   #{longitude}, 
+		    	  )
+		 ON DUPLICATE KEY UPDATE 
+		  	search_latitude  = #{searchLatitude}
+		  , search_longitude = #{searchLongitude}
+		  , latitude 	     = #{latitude}
+		  , longitude    	 = #{longitude}
+	 
+
+		<selectKey resultType="int"  keyProperty="squareCode" order="AFTER">
+        	SELECT LAST_INSERT_ID() as square_code;
+  		</selectKey>			
+	</insert>
+	<update id="update" parameterType="com.mrc.db.dto.address.MapSquare">
+
+		update t_map_square
+		   set search_latitude  = #{searchLatitude}
+		     , search_longitude = #{searchLongitude}
+		     , latitude 	    = #{latitude}
+		     , longitude    	= #{longitude}
+		 where square_code      = #{squareCode}
+	</update>
+	<delete id="delete" parameterType="com.mrc.db.dto.address.MapSquare">
+		delete from t_map_square
+	     where square_code = #{squareCode}
+
+   </delete>
+	
+</mapper>

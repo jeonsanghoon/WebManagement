@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrc.db.mapper.AddressAreaMapper">
+	<select id="getList"
+		parameterType="com.mrc.db.dto.address.AddressAreaCond"
+		resultType="com.mrc.db.dto.address.AddressArea">
+		select a.level, a.code, a.name, a.keyword_code
+		     , a.display_name, a.latitude, a.longitude, a.hide
+		     , concat(ifnull(concat(b.name,' '),''), ifnull(concat(c.name,' '),''), a.name) as full_name
+		from t_address_area a
+		left join t_address_area b
+		  <![CDATA[on a.level <> 1]]>
+		 and b.level = 1
+		 and a.code like concat(b.code,'%')
+		left join t_address_area c
+		  on a.level = 3
+		 and c.level = 2
+		 and a.code like concat(c.code,'%')
+		
+		<where>
+			<if test="level != null">
+				and a.level = #{level}
+			</if>
+		
+			<if test="code != null and code != '' ">
+				and a.code like #{code} 
+			</if>
+			<if test="name != null and name != '' ">
+				and a.name = #{name} 
+			</if>
+			<if test="keywordCode != null and keywordCode != '' ">
+				and a.keyword_code = #{keywordCode}
+			</if>
+			<if test="hide != null ">
+				and a.hide = #{hide} 
+			</if>
+			<if test="isNullLatitude == true">
+				and a.latitude is null
+			</if>
+			<if test="isNullLatitude == false">
+				and a.latitude is not null
+			</if>
+		</where>
+		;
+	</select>
+	<insert id="save" 
+		parameterType="com.mrc.db.dto.address.AddressArea">
+		INSERT INTO t_address_area
+		(
+		   level, code, name, keyword_code
+		)
+		values(
+		   #{level}, #{code}, #{name}, #{keywordCode}
+        );
+	</insert>
+	<update id="update" parameterType="com.mrc.db.dto.address.AddressArea">
+		update t_address_area
+		   set name         = #{name}
+			 , keyword_code = #{keywordCode}
+			 , latitude     = #{latitude}
+			 , longitude    = #{longitude}
+         where level        = #{level}
+		   and code         = #{code};
+
+
+	</update>
+	
+
+	<delete id="delete" parameterType="com.mrc.db.dto.address.AddressArea">
+		delete from t_address_location
+		 where level        = #{level}
+		   and code         = #{code}
+	</delete>
+	
+	<select id="getCodeByAddress"
+		parameterType="com.mrc.db.dto.address.AddressCond"
+		resultType="com.mrc.db.dto.address.LocationDong">
+		   
+		    set @square_code :=-1;
+
+			<if test="latitude != null">
+				set @latitude  := #{latitude};
+				set @longitude := #{longitude};
+				set @distance  := 0.00125 - 0.00001;
+
+				select square_code into @square_code
+				 from t_map_square
+				WHERE search_latitude = floor(@latitude * 100) / 100.0
+				  and search_longitude = floor(@longitude * 100) / 100.0
+				  and @latitude between latitude - @distance and latitude
+				  and @longitude between longitude and longitude + @distance ; 
+			</if>			
+		
+  
+		   SELECT a.code
+		         ,a.dis_sido_name
+			     ,a.sido_name
+			     ,a.sigungu_name
+			     ,a.dong2_name
+			     ,a.latitude
+			     ,a.longitude
+			     ,@square_code as square_code 
+			  FROM v_address_area a
+			
+			<where>
+			<if test="sidoName != null">
+				and a.sido_name = #{sidoName}
+			</if>
+			<if test="sigunguName != null">
+				and a.sigungu_name = #{sigunguName}
+			</if>
+			<if test="dong2Name != null">
+				and a.dong2_name = #{dong2Name}
+			</if>
+			
+			<if test="address != null">
+				and  ( #{address} LIKE CONCAT(a.dis_sido_name,' ',a.sigungu_name, ' ', a.dong2_name ,'%')
+						 OR #{address} LIKE CONCAT(a.sido_name,' ',a.sigungu_name, ' ', a.dong2_name ,'%')
+					 )
+			</if>
+			</where>
+			
+			ORDER BY fn_split(a.code,'|',1), fn_split(a.code,'|',2), a.dong2_name;	
+	</select>
+</mapper>

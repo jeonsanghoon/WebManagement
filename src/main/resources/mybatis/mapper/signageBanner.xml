@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.SignageBannerMapper">
+    <select id="getList"
+            parameterType="com.mrc.db.dto.signage.SignageBanner"
+            resultType="com.mrc.db.dto.signage.SignageBannerList">
+
+        set @sign_code := #{signCode};
+        set @loginCode := #{loginCode};
+        select b.code
+                , a.sign_code
+                , b.banner_code
+                , b.fr_date
+                , b.to_date
+                , b.page
+                , b.seq
+                , b.is_private
+                , b.remark
+                , b.insert_code
+                , b.insert_date
+                , b.update_code
+                , b.update_date
+                , c.title
+                , c.sub_title
+                , c.thumb_image_url
+                , c.banner_type
+                , @loginCode as login_code
+        from t_signage a
+        inner join t_signage_banner b
+           on a.sign_code = b.sign_code
+        inner join t_banner c
+           on b.banner_code = c.banner_code
+          and c.status = 99
+          and c.hide = 0
+        <where>
+            <if test="signCode != null ">
+                and b.sign_code = #{signCode}
+            </if>
+            <if test="page != null ">
+                and b.page = #{page}
+            </if>
+
+        </where>
+        order by b.sign_code, b.page, b.seq
+    </select>
+    <insert id="saveList"  keyProperty="code"  parameterType="java.util.List">
+        insert into t_signage_banner
+        (
+            code, sign_code, banner_code, fr_date, to_date, page, seq, is_private
+            , request_code, remark, insert_code, insert_date, update_code, update_date
+        )
+        values
+            <foreach item="item" index="index" collection="list" separator=" , ">
+            (
+              #{item.code},         #{item.signCode},    #{item.bannerCode}, #{item.frDate}
+            , #{item.toDate},       #{item.page},        #{item.seq}      ,  #{item.isPrivate}
+            , #{item.requestCode},  #{item.remark},      #{item.loginCode}
+            , current_timestamp(),   #{item.loginCode},  current_timestamp()
+            )
+            </foreach>
+        ON DUPLICATE KEY UPDATE
+            fr_date      = values(fr_date)
+           ,to_date      = values(to_date)
+           ,page         = values(page)
+           ,seq          = values(seq)
+           ,is_private   = values(is_private)
+           ,request_code = values(request_code)
+           ,remark       = values(remark)
+           ,update_code  = values(update_code)
+           ,update_date  = current_timestamp();
+    </insert>
+    <update id="updateList" parameterType="java.util.List">
+        <foreach item="item" index="index" collection="list">
+        update t_signage_banner
+           set fr_date      = #{item.frDate}
+              ,to_date      = #{item.toDate}
+              ,page         = #{item.page}
+              ,seq          = #{item.seq}
+              ,request_code = #{item.requestCode}
+              ,remark       = #{item.remark}
+              ,update_code  = #{item.insertCode}
+              ,update_date  = current_timestamp()
+        where code = #{code};
+        </foreach>
+    </update>
+    <delete id="deleteList" parameterType="java.util.List">
+        delete from t_signage_banner
+        <where>
+            <foreach collection="list" item="item" open="" close="" separator="OR">
+                code = #{item.code}
+            </foreach>
+        </where>
+    </delete>
+
+    <delete id="arrangeAfterSave" parameterType="com.mrc.db.dto.signage.SignageBanner">
+        update t_signage_banner a
+         inner join (select code
+                            , case when b.frame_type = 1 then (row_number() over(order by a.seq)) else  (row_number() over(order by a.seq)) % b.frame_type end  as num
+                            , case when b.frame_type = 1 then 1 else floor((row_number() over(order by a.seq)) / b.frame_type) + 1 end as page
+                       from t_signage_banner a
+                      inner join t_signage b
+                         on a.sign_code = b.sign_code
+                      where a.sign_code = #{signCode}
+                        and a.page = #{page}
+                    ) b
+                  on a.code = b.code
+          set a.seq  = b.num
+            , a.page = b.page
+        where a.sign_code = #{signCode}
+          and a.page = #{page}
+    </delete>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.MemberBookmarkMapper">
+	<select id="getList"
+		parameterType="com.mrc.db.dto.member.MemberBookmark"
+		resultType="com.mrc.db.dto.member.MemberBookmark">
+		select a.* 
+		  from t_member_bookmark a
+		<where>
+			 <if test="bookmarkCode != null ">
+					and a.bookmark_code = #{bookmarkCode}
+			 </if>
+			<if test="memberCode != null ">
+			  	and a.member_code = #{memberCode}
+			  </if>
+			<if test="bannerCode != null ">
+				and a.banner_code = #{bannerCode}
+			</if>
+			<if test="localbox_code != null ">
+				and a.localbox_code = #{localboxCode}
+			</if>
+			<if test="signCode != null ">
+				and a.sign_code = #{signCode}
+			</if>
+			  	
+
+		</where>		  
+	</select>
+
+	<insert id="save" parameterType="com.mrc.db.dto.member.MemberBookmark" >
+		INSERT INTO t_member_bookmark
+		(bookmark_name,  bookmark_type, member_code, banner_code, localbox_code, sign_code, remark, insert_date )
+		values(#{bookmarkName}, #{bookmarkType}, #{memberCode}, #{bannerCode}, #{localboxCode}, #{signCode}, #{remark} ,current_timestamp());
+
+		 
+	</insert>
+
+	<delete id="delete" parameterType="com.mrc.db.dto.member.MemberBookmark">
+		delete from t_member_bookmark
+		<where>
+			  <if test="bookmarkCode != null ">
+			  	and bookmark_code = #{bookmarkCode}
+			  </if>
+			
+			  <if test="memberCode != null ">
+			  	and member_code = #{memberCode}
+			  </if>
+			  <if test="bookmarkType != null ">
+			  	and bookmark_type = #{bookmarkType}
+			  </if>
+			  <if test="signCode != null ">
+			  	and sign_code = #{signCode}
+			  </if>
+			  <if test="bannerCode != null ">
+			  	and banner_code = #{bannerCode}
+			  </if>
+			  <if test="localboxCode != null ">
+			  	and localbox_code = #{localboxCode}
+			  </if>
+		</where>
+	</delete>
+</mapper>

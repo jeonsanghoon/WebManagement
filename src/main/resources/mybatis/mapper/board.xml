@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.db.mapper.BoardMapper">
+	<select id="getList"
+		parameterType="com.mrc.db.dto.board.BoardCond"
+		resultType="com.mrc.db.dto.board.Board">
+		select sql_calc_found_rows
+		       row_number() over(order by ${sortBy}) as idx
+		     , a.board_code
+		     , a.board_type
+		     , a.title
+		     , a.content
+		     , a.search_cnt
+		     , a.hide
+		     , a.insert_code
+		     , b.member_name as insert_name
+		     , a.insert_date
+		     , case when c.board_code is null then 0 else 1 end AS is_read
+		from t_board a
+	   inner join t_member b
+	      on a.insert_code = b.member_code 
+	    left join t_board c
+	      on a.board_code = c.board_code 
+	    <choose>
+	      	<when test="boardCodes != null and boardCodes != '' ">
+				and c.board_code not in (${boardCodes}) 
+			</when>
+		</choose>
+			
+		<where>
+		    <if test="boardCode != null ">
+				and a.board_code = #{boardCode}
+			</if>
+			<if test="boardType != null ">
+				and a.board_type = #{boardType}
+			</if>
+			<if test="title != null and title !='' ">
+				and a.title like concat('%', #{title},'%')
+			</if>
+			<if test="content != null and content != '' ">
+				and a.content like concat('%', #{content},'%')
+			</if>
+			<if test="insertCode != null ">
+				and a.insert_code = #{insertCode}
+			</if>
+			<if test="insertName != null ">
+				and b.member_name like concat('%', #{insertName},'%')
+			</if>
+			<if test="isRead != null ">
+				and case when c.board_code is null then 0 else 1 end = #{isRead}
+			</if>
+			
+		</where>
+		order by idx desc
+		limit ${startRow}, ${rowSize}
+	</select>
+
+	<insert id="save"  keyProperty="boardCode" parameterType="com.mrc.db.dto.board.Board" >
+		INSERT INTO t_board
+		(board_code, board_type, title, content, search_cnt, hide, insert_code, insert_date )
+		
+		values(#{boardCode}, #{boardType}, #{title}, #{content}, #{searchCnt}, #{hide}, #{insertCode} ,current_timestamp())
+		 ON DUPLICATE KEY UPDATE 
+		    title         = #{title}
+		  , content       = #{content}
+		  , insert_date   = current_timestamp();
+		<selectKey resultType="int"  keyProperty="boardCode" order="AFTER">
+			SELECT LAST_INSERT_ID() as board_code;
+		</selectKey>
+	</insert>
+
+	<delete id="delete" parameterType="com.mrc.db.dto.board.Board">
+		delete from t_board
+		 where board_code = #{boardCode}
+   </delete>
+	<update id="update" parameterType="com.mrc.db.dto.board.Board">
+
+		update t_board
+           set title         = #{title}
+		     , content       = #{content}
+		     , insert_date   = current_timestamp()
+		 where board_code    = #{boardCode}
+
+	</update>
+	<select id="getReadList"
+		parameterType="com.mrc.db.dto.board.BoardRead"
+		resultType="com.mrc.db.dto.board.BoardRead">
+		
+		select board_type, insert_code, board_codes
+		  from t_board_read 
+		 where board_type = #{boardType}
+		   and insert_code = #{insertCode}
+	</select>
+	<update id="read_update" parameterType="com.mrc.db.dto.board.BoardRead">
+
+		INSERT INTO t_board_read
+		(board_type, insert_code, board_codes )
+		values( #{boardType}, #{insertCode},  '${boardCode}')
+		ON DUPLICATE KEY UPDATE
+		     board_type   = #{boardType}
+		   , insert_code  = #{insertCode};
+		
+		UPDATE t_board_read
+		   SET board_codes = CASE WHEN IFNULL(board_codes,'') = '' 
+		                          THEN '${boardCode}' 
+		                          ELSE CONCAT(board_codes,',','${boardCode}') 
+		                          END
+		 where board_type = #{boardType}
+   		   AND insert_code = #{insertCode}
+   		   AND read_idx not in (SELECT read_idx 
+   		                          FROM t_board_read
+		                         WHERE board_type = #{boardType}
+   		                           AND insert_code = #{insertCode}
+                                   AND CONCAT(',',board_codes,',') LIKE '%,${boardCode},%'
+		                       ); 
+		update t_board
+		   set search_cnt = search_cnt + 1
+		 where board_code = #{boardCode};
+		  
+	</update>
+</mapper>

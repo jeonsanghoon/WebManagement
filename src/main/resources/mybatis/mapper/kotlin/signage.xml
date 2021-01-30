@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrc.mapper.IMapperSignage">
+    <select id="getList"
+            parameterType="com.mrc.dto.DtoSignageCond"
+            resultType="com.mrc.dto.DtoSignage">
+        select a.*
+        ,m.member_name
+        ,c.member_name as insert_name
+        ,d.member_name as update_name
+        ,b.name as is_vertical_name
+        ,b2.name as frame_type_name
+        from t_signage a
+        inner join t_common b
+        on b.main_code = 'S004'
+        and b.sub_code = a.is_vertical
+        inner join t_common b2
+        on b2.main_code = 'D002'
+        and b2.sub_code = a.frame_type
+        inner join t_member m
+        on a.member_code = m.member_code
+        inner join t_member c
+        on a.insert_code = c.member_code
+        inner join t_member d
+        on a.update_code = d.member_code
+
+
+        <where>
+            <if test="signCode != null ">
+                and a.sign_code = #{signCode}
+            </if>
+
+
+
+            <if test="signName != null and signName != '' ">
+                and a.signName LIKE CONCAT('%', #{signName}, '%')
+            </if>
+            <if test="hide != null  ">
+                and a.hide = #{hide}
+            </if>
+        </where>
+        order by a.signCode desc
+    </select>
+
+</mapper>

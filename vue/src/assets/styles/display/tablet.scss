@@ -1,0 +1,15 @@
+.ondaji.Local
+{
+    
+    .title{
+        &.default
+        {
+            font-size:map.get($fonts,20)!important;
+        }
+        &.page
+        {
+            font-size:map.get($fonts,14)!important;
+            
+        }
+    }
+}

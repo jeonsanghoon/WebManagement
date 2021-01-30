@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrc.db.mapper.BannerMapper">
+	<select id="getData" parameterType="com.mrc.db.dto.banner.BannerCond" resultType="com.mrc.db.dto.banner.Banner">
+		select banner_type,
+			   play_type,
+			   thumb_image_url,
+		 	   banner_image_url,
+		 	   banner_movie_url,
+		 	   title,
+		 	   sub_title,
+		 	   content,
+		 	   device_type2,
+		 	   is_vertical
+		  from t_banner
+		
+		<where>
+			and banner_code = #{bannerCode}
+		</where>
+	</select>
+	
+	<select id="getBannerStoreList" parameterType="com.mrc.db.dto.banner.BannerCond" resultType="com.mrc.db.dto.banner.Banner">
+
+		select sql_calc_found_rows
+		       row_number() over(order by ${orderBy}) as row_num
+			  ,a.banner_code        ,a.member_code      ,a.banner_type
+			  ,a.device_type        ,a.device_type2     ,a.frame_type
+			  ,a.is_vertical        ,a.is_private       ,a.fr_date
+			  ,a.to_date            ,a.fr_time          ,a.to_time
+			  ,a.ad_type            ,a.play_type        ,a.thumb_image_url
+			  ,a.banner_image_url   ,a.banner_movie_url
+			  ,a.title              ,a.sub_title        ,a.content
+			  ,a.bottom_banner_type ,a.status           ,a.search_cnt
+			  ,a.remark             ,a.hide             ,a.service_date
+			  ,a.insert_code        ,a.insert_date      ,a.update_code
+			  ,a.update_date        ,${loginCode} as login_co
+			  , #{notSignCode} as sign_code
+		  from t_banner a
+
+		<where>
+			<if test="memberCode != null ">
+				and a.member_code = #{memberCode}
+			</if>
+			<if test="frameType != null ">
+				and a.frame_type = #{frameType}
+			</if>
+			<if test="status != null ">
+				and a.status = #{status}
+			</if>
+			<if test="inStatus != null ">
+				and a.status in (${inStatus})
+			</if>
+
+			<if test="title != null and title != '' ">
+				and a.title like CONCAT('%', #{title}, '%')
+			</if>
+
+			<if test="deviceType2 != null and deviceType2.size != 0">
+				and a.device_type2 in
+				<foreach collection="deviceType2" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+			 	</foreach>
+			</if>
+
+			<if test="bannerType != null and bannerType.size != 0">
+				and a.banner_type in
+				<foreach collection="bannerType" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				 </foreach>
+			</if>
+
+			<if test="service != null and service.size != 0">
+			and a.status in
+			<foreach collection="service" item="item" index="index" separator="," open="(" close=")">
+				#{item}
+			 </foreach>
+			</if>
+			<if test="signCode != null">
+				and a.banner_code in (select banner_code from t_signage_banner where sign_code = #{signCode})
+			</if>
+
+			<if test="notSignCode != null">
+				and a.banner_code not in (select banner_code from t_signage_banner where sign_code = #{notSignCode})
+			</if>
+		</where>
+
+		order by ${orderBy}
+		limit #{pageStartNo}, #{pageInDataNum};
+	</select>
+
+	<select id="getTotalBannerNum" resultType="INTEGER">
+		select FOUND_ROWS();
+	</select>
+	
+	<select id="getRadiusType" parameterType="INTEGER" resultType="INTEGER">
+		select sub_code from t_common where main_code="D003" and ref_data1=#{radiusType};
+	</select>
+	
+	<select id="getPlaceTag" statementType="CALLABLE" parameterType="com.mrc.db.dto.banner.BannerPlaceTagCond" resultType="com.mrc.db.dto.banner.BannerPlaceTag">
+	                                                                	
+	{ call sp_getAddressSquare2 
+	(        
+          #{latitude, mode=IN,  jdbcType=DECIMAL, javaType=Double},
+          #{longitude, mode=IN,  jdbcType=DECIMAL, javaType=Double},
+          #{radiusType, mode=IN,  jdbcType=INTEGER, javaType=Integer}
+       )
+	}
+	</select>
+	
+	<select id="getTempBannerCnt" parameterType="com.mrc.db.dto.banner.Banner" resultType="INTEGER">
+		select count(*) from t_banner where member_code = #{memberCode} and status = #{status};
+	</select>
+	
+	<select id="getDeleteTempBannerCode" parameterType="com.mrc.db.dto.banner.Banner" resultType="INTEGER">
+		select banner_code from t_banner
+		 where member_code = #{memberCode} and
+			   status 	   = #{status}
+		 order by update_date limit 1
+	</select>
+	
+	<delete id="deleteBannerPlaceSquare" parameterType="INTEGER">
+		delete from t_banner_place_square where place_code = #{placeCode};
+   	</delete>
+   	
+	<delete id="delete" parameterType="INTEGER">
+		set @banner_code = #{bannerCode};
+		delete from t_banner_keyword where banner_code = @banner_code;
+		delete from t_banner_place_square where banner_code = @banner_code;
+		delete from t_banner_place where banner_code = @banner_code;
+		delete from t_banner_sub where banner_code = @banner_code;
+
+		select reply_code into @reply_code from t_banner_reply where banner_code = @banner_code;
+		delete from t_banner_reply_favorite where reply_code = @reply_code;
+		delete from t_banner_reply where reply_code = @reply_code;
+		delete from t_banner_request where banner_code = @banner_code;
+		delete from t_banner where banner_code = @banner_code;
+   	</delete>
+	
+	<insert id="save" keyProperty="banner_code" parameterType="com.mrc.db.dto.banner.Banner" >
+		INSERT INTO t_banner
+				  (	
+				  	banner_code,
+				  	banner_type,
+				  	device_type,
+				  	device_type2,
+				  	frame_type,
+				  	is_vertical,
+				  	is_private,
+				  	play_type,
+				  	member_code,
+				  	thumb_image_url,
+				  	banner_image_url,
+				  	banner_movie_url,
+				  	title, 
+				  	sub_title,
+				  	content, 
+				  	status,
+				  	remark,
+				  	bottom_banner_type,
+				  	hide,
+				  	insert_code, 
+				  	insert_date, 
+				  	update_code, 
+				  	update_date
+				  )
+		    values(  
+		   		   #{bannerCode},
+		    	   #{bannerType},
+		    	   #{deviceType},
+		    	   #{deviceType2},
+				   #{frameType},
+				   #{isVertical},
+				   #{isPrivate},
+				   #{playType},
+		    	   #{memberCode},
+		    	   #{thumbImageUrl},
+				   #{bannerImageUrl},
+				   #{bannerMovieUrl},
+		    	   #{title}, 
+		    	   #{subTitle},
+		    	   #{content},
+		    	   #{status},
+		    	   #{remark},
+		    	   #{bottomBannerType},
+		    	   #{hide},
+		    	   #{insertCode},
+		    	   current_timestamp(),
+		    	   #{insertCode},
+		    	   current_timestamp()
+		    	  )
+		 ON DUPLICATE KEY UPDATE 
+		    banner_type 		= #{bannerType}
+		  , device_type 		= #{deviceType}
+		  , device_type2 		= #{deviceType2}
+		  , frame_type 			= #{frameType}
+		  , is_vertical 		= #{isVertical}
+		  , is_private 			= #{isPrivate}
+		  , play_type		 	= #{playType}
+		  ,	member_code			= #{memberCode}
+		  , thumb_image_url		= #{thumbImageUrl}
+		  , banner_image_url	= #{bannerImageUrl}
+		  ,	banner_movie_url	= #{bannerMovieUrl}
+		  , title 				= #{title}
+		  , sub_title 			= #{subTitle}
+		  , content				= #{content}
+		  , status				= #{status}
+		  , remark  			= #{remark}
+		  , bottom_banner_type  = #{bottomBannerType}
+		  , hide				= #{hide}
+		  , update_code 		= #{insertCode}
+		  , update_date 		= current_timestamp();
+
+		<selectKey resultType="int" keyProperty="bannerCode" order="AFTER">
+        	SELECT LAST_INSERT_ID() as banner_code;
+  		</selectKey>			
+	</insert>
+	
+	<delete id="deleteBannerPlace" parameterType="Integer">
+		delete from t_banner_place where banner_code = #{bannerCode};
+		delete from t_banner_place_square where banner_code = #{bannerCode};
+   	</delete>
+	
+	<select id="getAddressArea" parameterType="String" resultType="com.mrc.db.dto.address.AddressArea">
+  		SELECT * FROM t_address_area WHERE code = #{code}
+	</select>  
+	
+	<insert id="saveBannerPlace" keyProperty="banner_code" parameterType="com.mrc.db.dto.banner.BannerPlace" >
+	    set @address =  #{address};
+		set @area_code = fn_getAreacode (@address);
+		set @region = fn_getAreaName (@address);
+
+  		INSERT INTO t_banner_place
+				  (	
+				  	banner_code,
+				  	area_code,
+		    	    region,
+		    	    address ,  
+				  	road_address, 
+				  	zip_code, 
+				  	latitude,
+				  	longitude,
+				  	radius,
+				  	hide,
+				  	insert_code, 
+				  	insert_date, 
+				  	update_code, 
+				  	update_date
+				  )
+		    values(  
+		    	   #{bannerCode},
+		    	 	@area_code,
+		    	    @region,
+		    	    @address , 
+		    	   #{roadAddress},
+		    	   #{zipCode},
+		    	   #{latitude},
+		    	   #{longitude},
+		    	   #{radius},
+		    	   #{hide},
+		    	   #{insertCode},
+		    	   current_timestamp(),
+		    	   #{insertCode},
+		    	   current_timestamp()
+		    	  )
+		    	  
+		<selectKey resultType="int" keyProperty="placeCode" order="AFTER">
+        	SELECT LAST_INSERT_ID() as place_code;
+  		</selectKey>
+	</insert>
+	
+	<insert id="saveBannerPlaceSquare" keyProperty="placeCode,bannerCode" parameterType="com.mrc.db.dto.banner.BannerPlaceSquare" >
+  		INSERT INTO t_banner_place_square
+				  (	
+				  	place_code,
+				  	area_code,
+				  	banner_code,
+				  	square_type, 
+				  	name, 
+				  	gage_rate,
+				  	insert_code, 
+				  	insert_date
+				  )
+		    values(  
+		    	   #{placeCode},
+		    	   #{areaCode},
+		    	   #{bannerCode},
+		    	   #{squareType},
+		    	   #{name}, 
+		    	   #{gageRate},
+		    	   #{insertCode},
+		    	   current_timestamp()
+		    	  )
+	</insert>
+	
+	<delete id="deleteBannerKeyword" parameterType="Integer">
+		delete from t_banner_keyword where banner_code = #{bannerCode};
+   	</delete>
+	
+	<insert id="saveBannerKeyword" keyProperty="bannerCode,keywordCode" parameterType="com.mrc.db.dto.banner.BannerKeyword">
+  		INSERT INTO t_banner_keyword
+				  (	
+				  	banner_code, 
+				  	keyword_code,
+				  	insert_code, 
+				  	insert_date
+				  )
+		    values(  
+		    	   #{bannerCode},
+		    	   #{keywordCode},
+		    	   #{insertCode},
+		    	   current_timestamp()
+		    	  )
+	</insert>
+	
+	<delete id="deleteBannerSub" parameterType="Integer">
+		delete from t_banner_sub where banner_code = #{bannerCode};
+   	</delete>
+	
+	<insert id="saveBannerSub" keyProperty="bannerCode,seq" parameterType="com.mrc.db.dto.banner.BannerSub">
+  		INSERT INTO t_banner_sub
+				  (	
+				  	banner_code, 
+				  	seq,
+				  	play_type,
+				  	banner_image_url,
+				  	banner_movie_url,
+				  	content,
+				  	insert_code, 
+				  	insert_date
+				  )
+		    values(  
+		    	   #{bannerCode},
+		    	   #{seq},
+				   #{playType},
+				   #{bannerImageUrl},
+				   #{bannerMovieUrl},
+				   #{content}, 
+		    	   #{insertCode},
+		    	   current_timestamp()
+		    	  )
+		   ON DUPLICATE KEY UPDATE 
+		    seq 				= #{seq}
+		  , play_type 			= #{playType}
+		  , banner_image_url 	= #{bannerImageUrl}
+		  , banner_movie_url 	= #{bannerMovieUrl}
+		  , content 			= #{content}
+	</insert>
+	
+	<select id="getSimpleTempBanner" parameterType="com.mrc.db.dto.banner.BannerCond" resultType="com.mrc.db.dto.banner.Banner">
+		select * from t_banner where member_code = #{memberCode} and status = #{status} order by update_date desc;
+	</select>
+	
+	<select id="getBannerKeyword" parameterType="Integer" resultType="String">
+		select k.keyword_name 
+		  from t_keyword as k
+		 inner join (
+		 				select keyword_code 
+		 				  from t_banner_keyword 
+		 				 where banner_code = #{bannerCode}
+		 		    ) as bk
+		    on k.keyword_code = bk.keyword_code;
+	</select>
+	
+	<select id="getBannerPlace" parameterType="Integer" resultType="com.mrc.db.dto.banner.BannerPlace">
+		select address, road_address, zip_code, latitude, longitude, radius from t_banner_place where banner_code = #{bannerCode};
+	</select>
+	
+	<select id="getBannerPlaceSquare" parameterType="Integer" resultType="com.mrc.db.dto.banner.BannerPlaceSquare">
+		select * from t_banner_place_square where banner_code = #{bannerCode};
+	</select>
+	
+	<select id="getBannerSub" parameterType="Integer" resultType="com.mrc.db.dto.banner.BannerSub">
+		select * from t_banner_sub where banner_code = #{bannerCode} order by seq;
+	</select>
+	
+	<update id="saveBannerStatus" keyProperty="bannerCode" parameterType="com.mrc.db.dto.banner.Banner">
+  		update t_banner 
+  		   set status       = #{status},
+  		       update_code  = #{insertCode},
+			   update_date  = current_timestamp(),
+			   service_date = 
+					   case when service_date is null then
+								current_timestamp()
+							else
+								service_date
+							end
+  		 where banner_code = #{bannerCode};
+	</update>
+
+	<select id="getReqBannerShareList" parameterType="com.mrc.db.dto.banner.BannerCond" resultType="com.mrc.db.dto.banner.BannerRequest">
+		select sql_calc_found_rows ROW_NUMBER() over() as row_num, tb.*
+		from (
+		      select tb.*,
+					 tbr.approval_member_code,
+		             tbr.status as req_status,
+		             tbr.insert_date as req_date
+			    from t_banner_request tbr
+			   inner join t_banner tb
+		    	  on tbr.banner_code = tb.banner_code
+		<where>
+		   and tbr.request_member_code = #{memberCode}
+		   and tbr.to_date >= date(now())
+			<if test="title != null and title != '' ">
+				and tb.title like CONCAT('%', #{title}, '%')
+			</if>
+
+			<if test="deviceType2 != null and deviceType2 != null deviceType2.size != 0">
+				and tb.device_type2 in
+				<foreach collection="deviceType2" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
+
+			<if test="bannerType!= null and bannerType.size != 0">
+				and tb.banner_type in
+				<foreach collection="bannerType" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="statuses.size != 0">
+				and tb.status in
+				<foreach collection="statuses" item="item" index="index" separator="," open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+
+		<choose>
+			<when test="dateSeq == 'ASC'">
+				ORDER BY tbr.insert_date
+			</when>
+			<otherwise>
+				ORDER BY tbr.insert_date DESC
+			</otherwise>
+		</choose>
+		) as tb
+		order by row_num
+		 limit #{pageStartNo}, #{pageInDataNum};
+	</select>
+
+	<select id="getResBannerShareList" parameterType="com.mrc.db.dto.banner.BannerCond" resultType="com.mrc.db.dto.mediaShop.LocalboxBannerRequest">
+		select sql_calc_found_rows ROW_NUMBER() over() as row_num,
+		       tbr.*
+		  from t_banner_request tbr
+		 where approval_member_code = #{memberId}
+		   and to_date >= date(now())
+		 order by row_num
+		 limit #{pageStartNo}, #{pageInDataNum};
+	</select>
+</mapper>

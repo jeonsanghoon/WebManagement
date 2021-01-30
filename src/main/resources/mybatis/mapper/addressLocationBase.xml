@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrc.db.mapper.AddressLocationBaseMapper">
+    <select id="getList" parameterType="com.mrc.db.dto.address.AddressLocationBaseCond" resultType="com.mrc.db.dto.address.AddressLocationBase">
+        select  a.location_code
+                ,a.dong_code
+                ,a.sido_name
+                ,a.sigungu_name
+                ,a.dong_name
+                ,a.zip_code
+                ,a.x
+                ,a.y
+                ,a.base_latitude
+                ,a.base_longitude
+                ,a.latitude
+                ,a.longitude
+                ,a.update_date
+                ,a.apply_date
+        from t_address_location_base a
+
+        <where>
+            <if test="locationCode != null">
+                and a.location_code = #{locationCode}
+            </if>
+            <if test="x != null">
+                and a.x = #{x}
+            </if>
+            <if test="y != null">
+                and a.y = #{y}
+            </if>
+            <if test="sidoName != null and sidoName != '' ">
+                and a.sido_name = #{sidoName}
+            </if>
+            <if test="sigunguName != null and sigunguName != '' ">
+                and a.sigungu_name = #{sigunguName}
+            </if>
+            <if test="dongName != null and dongName != '' ">
+                and a.dong_name = #{dongName}
+            </if>
+            <if test="dong2Name != null and dong2Name != '' ">
+                and a.dong2_name = #{dong2Name}
+            </if>
+
+            <if test="isNullApply = true">
+                and a.apply_date is null
+            </if>
+            <if test="isNullSearchLatitude = true">
+                and a.search_latitude is null
+            </if>
+
+        </where>
+       ;
+    </select>
+    <insert id="save" keyProperty="locationCode" parameterType="com.mrc.db.dto.address.AddressLocationBase">
+
+        INSERT INTO t_address_location_base
+        (
+            dong_code, sido_name, sigungu_name, dong_name, zip_code
+            , x, y, search_latitude, search_longitude, base_latitude, base_longitude, latitude, longitude, update_date,hide
+        )
+        values(
+            #{dongCode}, #{sidoName}, #{sigunguName}, #{dongName},#{zipCode}
+            ,#{x}, #{y}, #{searchLatitude}, #{searchLongitude}, #{baseLatitude}, #{baseLongitude}, #{latitude}, #{longitude}
+            ,current_timestamp(), #{hide}
+        )
+        ON DUPLICATE KEY UPDATE
+          dong_code         = #{dongCode}
+        , sido_name        = #{sidoName}
+        , sigungu_name     = #{sigunguName}
+        , dong_name        = #{dongName}
+        , zip_code         = #{zipCode}
+        , x                = #{x}
+        , y                = #{y}
+        , search_latitude  = #{searchLatitude}
+        , search_longitude = #{searchLongitude}
+        , base_latitude    = #{baseLatitude}
+        , base_longitude   = #{baseLongitude}
+        , latitude         = #{latitude}
+        , longitude        = #{longitude}
+        , update_date      = current_timestamp()
+        , apply_date       = null
+        , hide             = #{hide};
+
+        <selectKey resultType="Integer" keyProperty="locationCode"
+                   order="AFTER">
+            SELECT LAST_INSERT_ID() as location_code;
+        </selectKey>
+    </insert>
+    <insert id="saveList" parameterType="java.util.List">
+        INSERT INTO t_address_location_base
+        (
+            dong_code, sido_name, sigungu_name, dong_name, dong2_name, zip_code
+            , x, y, search_latitude, search_longitude, base_latitude, base_longitude, latitude, longitude
+            , update_date, apply_date, hide
+        )
+        VALUES
+        <foreach item="item" index="index" collection="list" separator=" , ">
+            (
+              #{item.dongCode},     #{item.sidoName},       #{item.sigunguName}
+            , #{item.dongName},     #{item.dong2Name},      #{item.zipCode}
+            , #{item.x}, #{item.y},      #{item.searchLatitude}, #{item.searchLongitude}
+            , #{item.baseLatitude}, #{item.baseLongitude},  #{item.latitude}, #{item.longitude}
+            , current_timestamp(), null, #{item.hide}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+            dong_code    = values(dong_code)
+          , sido_name    = values(sido_name)
+          , sigungu_name = values(sigungu_name)
+          , dong_name    = values(dong_name)
+          , dong2_name   = values(dong2_name)
+          , zip_code     = values(zip_code)
+          , x                = values(x)
+          , y                = values(y)
+          , search_latitude  = values(search_latitude)
+          , search_longitude = values(search_longitude)
+          , base_latitude    = values(base_latitude)
+          , base_longitude   = values(base_longitude )
+          , latitude         = values(latitude)
+          , longitude        = values(longitude)
+          , update_date      = current_timestamp()
+          , apply_date       = null
+          , hide        = values(hide)
+        ;
+    </insert>
+    <delete id="deleteTmpOriginAddressTxtfile" timeout="600">
+        DELETE FROM tmp_origin_address_txtfile;
+        ALTER TABLE tmp_origin_address_txtfile AUTO_INCREMENT = 1;
+    </delete>
+    <insert id="addTmpOrignAddressTxtfileByTextfile" timeout="3600" parameterType="String">
+
+        /*'C:/source/files/locationSchedule/entrc_mod_202005.txt'*/
+        LOAD DATA LOCAL INFILE '${value}'
+        INTO TABLE ondaji.tmp_origin_address_txtfile
+        FIELDS TERMINATED BY '|'
+        ENCLOSED BY '\"'
+        LINES TERMINATED BY '\n'
+        ( @sigungu_code	   ,@enter_code	    ,@dong_code	 ,@sido_name		,@sigungu_name
+        ,@dong_name       ,@road_code	    ,@road_name	 ,@is_basement		,@building_no
+        ,@building_sub_no ,@building_name  ,@zone_no	 ,@buinding_kind	,@building_type
+        ,@dong2_name	   ,@x		    ,@y		 ,@save_type
+        )
+        set sigungu_code	= @sigungu_code
+        ,enter_code		= @enter_code
+        ,dong_code		= @dong_code
+        ,sido_name		= @sido_name
+        ,sigungu_name	= @sigungu_name
+        ,dong_name		= @dong_name
+        ,road_code		= @road_code
+        ,road_name		= @road_name
+        ,is_basement		= @is_basement
+        ,building_no		= @building_no
+        ,building_sub_no	= @building_sub_no
+        ,building_name	= @building_name
+        ,zone_no		= @zone_no
+        ,buinding_kind	= @buinding_kind
+        ,building_type	= @building_type
+        ,dong2_name		= @dong2_name
+        ,x			= @x
+        ,y			= @y
+        ,save_type		= @save_type;
+
+    </insert>
+    <insert id="addAddressLocationBaseByTmpOrignAddressTxtfile"  timeout="3600">
+        call sp_addAddressLocationBaseByTxtfile();
+    </insert>
+    <insert id="autoAddAddressAreaByAddressLocationBase"  timeout="3600">
+        call sp_addressAreaAutoAdd();
+    </insert>
+    <update id="update" parameterType="com.mrc.db.dto.address.AddressLocationBase">
+
+        update t_address_location_base
+           set dong_code       = #{dongCode}
+             , sido_name        = #{sidoName}
+             , sigungu_name     = #{sigunguName}
+             , dong_name        = #{dongName}
+             , dong2_name       = #{dong2Name}
+             , zip_code         = #{zipCode}
+             , x                = #{x}
+             , y                = #{y}
+             , search_latitude  = #{searchLatitude}
+             , search_longitude = #{searchLongitude}
+             , base_latitude    = #{baseLatitude}
+             , base_longitude   = #{baseLongitude}
+             , latitude         = #{latitude}
+             , longitude        = #{longitude}
+             , update_date      = null
+             , hide             = #{hide}
+
+        <where>
+            <if test="locationCode != null">
+                and location_code = #{locationCode}
+            </if>
+            <if test="x != null">
+                and x = #{x}
+            </if>
+            <if test="y != null">
+                and y = #{y}
+            </if>
+
+            <if test="locationCode == null and x == null">
+                and 1=0
+            </if>
+
+        </where>
+    </update>
+    <update id="updateList" parameterType="java.util.List">
+        <foreach item="item" index="index" collection="list" separator=";">
+            update t_address_location_base
+            set dong_code       = #{item.dongCode}
+            , sido_name        = #{item.sidoName}
+            , sigungu_name     = #{item.sigunguName}
+            , dong_name        = #{item.dongName}
+            , dong2_name       = #{item.dong2Name}
+            , zip_code         = #{item.zipCode}
+            , x                = #{item.x}
+            , y                = #{item.y}
+            , search_latitude  = #{item.searchLatitude}
+            , search_longitude = #{item.searchLongitude}
+            , base_latitude    = #{item.baseLatitude}
+            , base_longitude   = #{item.baseLongitude}
+            , latitude         = #{item.latitude}
+            , longitude        = #{item.longitude}
+            , update_date      = null
+            , hide             = #{item.hide}
+
+            <where>
+                <if test="item.locationCode != null">
+                    and location_code = #{item.locationCode}
+                </if>
+                <if test="item.x != null">
+                    and x = #{item.x}
+                </if>
+                <if test="item.y != null">
+                    and y = #{item.y}
+                </if>
+
+                <if test="item.locationCode == null and item.x == null">
+                    and 1=0
+                </if>
+
+            </where>
+
+        </foreach>
+    </update>
+    <delete id="delete" parameterType="com.mrc.db.dto.address.AddressLocationBase">
+
+        delete from t_address_location_base
+        <where>
+            <if test="locationCode != null">
+                and location_code = #{locationCode}
+            </if>
+
+            <if test="x != null">
+                and x = #{x}
+            </if>
+            <if test="y != null">
+                and y = #{y}
+            </if>
+            <if test="sidoName != null and sidoName != '' ">
+                and sido_name = #{sidoName}
+            </if>
+            <if test="sigunguName != null and sigunguName != '' ">
+                and sigungu_name = #{sigunguName}
+            </if>
+            <if test="dongName != null and dongName != '' ">
+                and dong_name = #{dongName}
+            </if>
+            <if test="dong2Name != null and dong2Name != '' ">
+                and dong2_name = #{dong2Name}
+            </if>
+            <if test="locationCode == null and x == null">
+                and 1=0
+            </if>
+        </where>
+    </delete>
+</mapper>
